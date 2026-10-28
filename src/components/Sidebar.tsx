@@ -6,6 +6,7 @@ import {
   Archive,
   ChevronRight,
   Compass,
+  FileText,
   X
 } from 'lucide-react';
 

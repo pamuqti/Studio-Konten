@@ -52,8 +52,6 @@ export const PostSchedulerModal: React.FC<PostSchedulerModalProps> = ({
   onSaveSchedule,
   onPublishNow
 }) => {
-  if (!isOpen) return null;
-
   const today = new Date().toISOString().slice(0, 10);
   const f = contentItem?.fields || {};
 
@@ -87,6 +85,28 @@ export const PostSchedulerModal: React.FC<PostSchedulerModalProps> = ({
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Sync state whenever modal opens or props change
+  React.useEffect(() => {
+    if (isOpen) {
+      const curFields = contentItem?.fields || {};
+      const newTitle = existingPost?.title || curFields.Hook || contentItem?.title || 'Konten Baru';
+      setTitle(newTitle);
+      setScheduledDate(existingPost?.scheduledDate || initialDate || curFields.Tanggal || today);
+      setScheduledTime(existingPost?.scheduledTime || curFields['Jam Tayang'] || '19:00');
+      setMasterCaption(existingPost?.masterCaption || curFields.Caption || '');
+      setTargetPlatforms(existingPost?.targetPlatforms || ['instagram', 'tiktok', 'youtube']);
+      setMediaList(existingPost?.media || []);
+      setTiktokMode((existingPost?.platformOverrides?.tiktok?.publishMode as any) || 'inbox_draft');
+      setYoutubeTitle(
+        existingPost?.platformOverrides?.youtube?.youtubeTitle ||
+        (curFields.Hook ? curFields.Hook.slice(0, 95) : newTitle)
+      );
+      setUploadError('');
+    }
+  }, [isOpen, contentItem, existingPost, initialDate]);
+
+  if (!isOpen) return null;
 
   const togglePlatform = (pf: SocialPlatformKey) => {
     setTargetPlatforms(prev =>

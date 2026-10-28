@@ -38,12 +38,20 @@ export const SocialConnectionsModal: React.FC<SocialConnectionsModalProps> = ({
   onSaveR2Config,
   onNotify
 }) => {
-  if (!isOpen) return null;
-
   const [activeTab, setActiveTab] = useState<SocialPlatformKey | 'r2'>('instagram');
   const [localConnections, setLocalConnections] = useState({ ...connections });
   const [localR2, setLocalR2] = useState({ ...r2Config });
   const [testingStatus, setTestingStatus] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setLocalConnections({ ...connections });
+      setLocalR2({ ...r2Config });
+      setTestingStatus(null);
+    }
+  }, [isOpen, connections, r2Config]);
+
+  if (!isOpen) return null;
 
   const handleUpdateConnField = (
     pf: SocialPlatformKey,
