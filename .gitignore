@@ -1,0 +1,14 @@
+node_modules/
+build/
+dist/
+dist-canvas/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+.firebase/
+*.zip
+src_backup_pre_aistudio_update/
+ruang-konten/
+

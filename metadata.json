@@ -1,0 +1,6 @@
+{
+  "name": "Ruang Konten",
+  "description": "Perencana konten dan strategi brand profesional: kalender editorial dengan detail platform dan placement spesifik, ditenagai Gemini AI dan Brand Brain.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
