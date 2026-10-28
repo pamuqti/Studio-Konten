@@ -271,6 +271,7 @@ export interface BrandBrain {
   scale?: 'micro' | 'smb' | 'scaleup';
   scaleLabel?: string;
   product: string;
+  tagline?: string;
   brandPromise?: string;
   mission?: string;
   vision?: string;
@@ -292,6 +293,8 @@ export interface BrandBrain {
   visualDNA?: VisualDNA;
   contentDNA?: ContentDNA;
   brandMemory?: BrandMemory;
+  painPoints?: string[];
+  pillars?: ContentPillar[];
   customDirectives?: string[];
   customBlocks?: CustomKnowledgeBlock[];
   customKnowledge?: string;

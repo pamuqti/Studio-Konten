@@ -57,7 +57,7 @@ import {
   calculateBrainCompleteness,
   createDefaultBlock
 } from '../utils/brandBrainExport';
-import { extractBrandBrainAi } from '../services/gemini';
+import { extractBrandBrainAi, elaborateCustomBlockAi } from '../services/gemini';
 import {
   BrandBrainExportPanel,
   BrandBrainExportMenu,
@@ -270,6 +270,17 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
     }));
   };
 
+  const updateNewBrandPositioning = (field: string, val: string) => {
+    setNewBrandForm(prev => {
+      const pos = { ...(prev.positioning || {}), [field]: val };
+      const stmt = `${prev.name || "Brand"} adalah ${pos.weAre || "solusi"} untuk ${pos.forAudience || "audiens"} yang butuh ${pos.whoNeed || "jawaban"}, karena ${pos.becauseWhy || "teruji"}, berbeda dari ${pos.unlike || "alternatif lain"}.`;
+      return {
+        ...prev,
+        positioning: { ...pos, statement: pos.statement && field !== 'statement' ? stmt : pos.statement || stmt }
+      };
+    });
+  };
+
   const updateNewBrandAudienceDemographics = (field: string, val: any) => {
     setNewBrandForm(prev => ({
       ...prev,
@@ -301,33 +312,31 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
       ...prev,
       personalityVoice: {
         ...(prev.personalityVoice || {}),
-        voiceSpectrum: {
-          ...(prev.personalityVoice?.voiceSpectrum || {}),
+        spectrum: {
+          ...(prev.personalityVoice?.spectrum || {}),
           [field]: val
         }
       }
     }));
   };
 
-  const updateNewBrandVoiceArray = (field: 'archetypes' | 'emotionalTriggers' | 'styleGuardrails', val: string[]) => {
+  const updateNewBrandVoiceArray = (field: string, val: any) => {
+    const arr = typeof val === 'string' ? val.split('\n').map((s: string) => s.trim()).filter(Boolean) : val;
     setNewBrandForm(prev => ({
       ...prev,
       personalityVoice: {
         ...(prev.personalityVoice || {}),
-        [field]: val
+        [field]: arr
       }
     }));
   };
 
-  const updateNewBrandPlatformAccount = (platformKey: string, field: string, val: any) => {
+  const updateNewBrandPlatformAccount = (platformKey: string, val: any) => {
     setNewBrandForm(prev => ({
       ...prev,
-      socialAccounts: {
-        ...(prev.socialAccounts || {}),
-        [platformKey]: {
-          ...(prev.socialAccounts?.[platformKey] || {}),
-          [field]: val
-        }
+      platformAccounts: {
+        ...(prev.platformAccounts || {}),
+        [platformKey]: val
       }
     }));
   };
@@ -550,6 +559,19 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
       ...prev,
       customBlocks: (prev.customBlocks || []).filter(b => b.id !== id)
     }));
+  };
+
+  const handleElaborateBlock = async (blk: CustomKnowledgeBlock) => {
+    setExpandingBlockId(blk.id);
+    try {
+      const refined = await elaborateCustomBlockAi(blk.title, blk.category, blk.content, data);
+      updateBlock(blk.id, { content: refined });
+      onNotify?.(`✓ Blok "${blk.title}" berhasil diperinci via AI!`, "success");
+    } catch (e: any) {
+      onNotify?.(`Gagal memperinci blok: ${e.message || e}`, "error");
+    } finally {
+      setExpandingBlockId(null);
+    }
   };
 
   // Quick Extract via AI
@@ -2194,18 +2216,31 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
 
           {/* TAB 8: ACUAN BEBAS (CUSTOM DIRECTIVES & BLOK) */}
           {activeTab === "custom" && (
-            <div className="space-y-5 animate-in fade-in">
-              <div className="p-4 bg-[#f8faf7] rounded-2xl border border-[#dce5db] space-y-3">
-                <div className="font-bold text-xs text-[#183127] font-heading">
-                  Instruksi Wajib Khusus AI (Directives)
+            <div className="space-y-6 animate-in fade-in">
+              {/* 1. Instruksi Wajib Khusus AI (Directives) */}
+              <div className="bg-white rounded-2xl border border-[#dce4db] p-5 shadow-xs space-y-3">
+                <div className="border-b pb-2 border-[#edf1eb]">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#142620]">
+                    1. Instruksi Wajib Khusus AI (Directives)
+                  </h3>
+                  <p className="text-[11px] text-[#697c70] mt-0.5">
+                    Aturan mutlak yang wajib dipatuhi AI dalam seluruh konten (misal: format hashtag, penyebutan nama founder, dll).
+                  </p>
                 </div>
+
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={newDirective}
                     onChange={e => setNewDirective(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addDirective();
+                      }
+                    }}
                     placeholder="Ketik aturan khusus (contoh: Selalu sertakan 3 hashtag brand di akhir caption)..."
-                    className="flex-1 px-3.5 py-2 rounded-xl border border-[#cbd8cb] text-xs outline-none bg-white"
+                    className="flex-1 px-3.5 py-2 rounded-xl border border-[#cbd8cb] text-xs outline-none bg-white focus:border-[#205c49]"
                   />
                   <button
                     type="button"
@@ -2220,13 +2255,14 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
                   {(data.customDirectives || []).map((dir, idx) => (
                     <div
                       key={idx}
-                      className="p-2.5 rounded-xl bg-white border border-[#dce4db] flex items-center justify-between text-xs"
+                      className="p-2.5 rounded-xl bg-[#fcfdfb] border border-[#dce4db] flex items-center justify-between text-xs"
                     >
-                      <span className="text-[#1c3327]">{dir}</span>
+                      <span className="text-[#1c3327] font-medium">• {dir}</span>
                       <button
                         type="button"
                         onClick={() => removeDirective(idx)}
-                        className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
+                        className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer transition-colors"
+                        title="Hapus aturan"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -2235,6 +2271,237 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
                   {(!data.customDirectives || data.customDirectives.length === 0) && (
                     <p className="text-[11px] text-[#718476] italic">Belum ada instruksi khusus tambahan.</p>
                   )}
+                </div>
+              </div>
+
+              {/* 2. Blok Acuan Modular (Custom Brain Blocks) */}
+              <div className="bg-white rounded-2xl border border-[#dce4db] p-5 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b pb-3 border-[#edf1eb] flex-wrap gap-2">
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#142620]">
+                      2. Blok Acuan Modular (Custom Brain Blocks)
+                    </h3>
+                    <p className="text-[11px] text-[#697c70] mt-0.5">
+                      Tambahkan blok pengetahuan spesifik: SOP konten, katalog harga, kumpulan hook teruji, atau FAQ.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => addCustomBlock(selectedBlockCat === "all" ? "Aturan Wajib AI" : selectedBlockCat)}
+                      className="px-3 py-1.5 rounded-xl bg-[#205c49] text-white text-xs font-bold hover:bg-[#184738] transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Tambah Blok Acuan</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Filter Kategori Blok */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+                  {[
+                    { id: "all", label: "Semua Kategori" },
+                    { id: "Aturan Wajib AI", label: "Aturan Wajib AI" },
+                    { id: "Katalog Produk & Harga", label: "Katalog & Harga" },
+                    { id: "SOP & Konten", label: "SOP Konten" },
+                    { id: "FAQ & Objections", label: "FAQ" },
+                    { id: "Koleksi Copywriting", label: "Copywriting" },
+                    { id: "Kampanye & Event", label: "Event/Promo" },
+                    { id: "Riset & Catatan Bebas", label: "Catatan Riset" }
+                  ].map(cat => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setSelectedBlockCat(cat.id)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+                        selectedBlockCat === cat.id
+                          ? "bg-[#205c49] text-white font-semibold shadow-xs"
+                          : "bg-[#f1f5f0] text-[#415549] hover:bg-[#e4ece3]"
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Daftar Blok Acuan */}
+                <div className="space-y-3">
+                  {(!data.customBlocks || data.customBlocks.length === 0) ? (
+                    <div className="text-center py-8 border-2 border-dashed border-[#dce5db] rounded-2xl p-6 bg-[#fafcfa]">
+                      <div className="text-2xl mb-1">🧩</div>
+                      <div className="text-xs font-bold text-[#142620]">Belum ada blok acuan modular</div>
+                      <p className="text-[11px] text-[#697c70] mt-1 max-w-md mx-auto">
+                        Klik tombol di bawah untuk menambahkan blok contoh acuan SOP, daftar harga, atau FAQ yang langsung dibaca oleh AI.
+                      </p>
+                      <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+                        {[
+                          "Aturan Wajib AI",
+                          "Katalog Produk & Harga",
+                          "SOP & Konten",
+                          "FAQ & Objections",
+                          "Koleksi Copywriting"
+                        ].map(c => (
+                          <button
+                            key={c}
+                            type="button"
+                            onClick={() => addCustomBlock(c)}
+                            className="px-3 py-1.5 rounded-xl bg-white border border-[#cfded1] text-xs font-medium text-[#205c49] hover:bg-[#edf5ef] transition-colors shadow-2xs cursor-pointer"
+                          >
+                            + Tambah {c}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    (data.customBlocks || [])
+                      .filter(b => selectedBlockCat === "all" || b.category === selectedBlockCat)
+                      .map(b => (
+                        <div
+                          key={b.id}
+                          className={`rounded-2xl border transition-all ${
+                            b.isActive
+                              ? "border-[#cfe2d4] bg-white shadow-xs"
+                              : "border-gray-200 bg-gray-50/60 opacity-70"
+                          }`}
+                        >
+                          {/* Header Blok */}
+                          <div className="p-3.5 sm:px-4 border-b border-[#edf1eb] flex items-center justify-between flex-wrap gap-2 bg-[#fcfdfb] rounded-t-2xl">
+                            <div className="flex items-center gap-2.5 flex-1 min-w-[200px]">
+                              <button
+                                type="button"
+                                onClick={() => toggleBlockActive(b.id)}
+                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold border transition-all cursor-pointer flex items-center gap-1 ${
+                                  b.isActive
+                                    ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                                    : "bg-gray-200 text-gray-600 border-gray-300"
+                                }`}
+                                title={b.isActive ? "Aktif sebagai acuan AI" : "Nonaktif (Diabaikan AI)"}
+                              >
+                                <span className={`w-1.5 h-1.5 rounded-full ${b.isActive ? "bg-emerald-600" : "bg-gray-400"}`} />
+                                <span>{b.isActive ? "Aktif" : "Nonaktif"}</span>
+                              </button>
+
+                              <select
+                                value={b.category}
+                                onChange={e => updateBlock(b.id, { category: e.target.value })}
+                                className="text-[11px] font-semibold px-2 py-0.5 rounded-lg border border-[#cbdcd0] bg-white text-[#2a4537] outline-none"
+                              >
+                                <option value="Aturan Wajib AI">Aturan Wajib AI</option>
+                                <option value="Katalog Produk & Harga">Katalog Produk & Harga</option>
+                                <option value="SOP & Konten">SOP & Konten</option>
+                                <option value="FAQ & Objections">FAQ & Objections</option>
+                                <option value="Koleksi Copywriting">Koleksi Copywriting</option>
+                                <option value="Kampanye & Event">Kampanye & Event</option>
+                                <option value="Riset & Catatan Bebas">Riset & Catatan Bebas</option>
+                              </select>
+
+                              <input
+                                type="text"
+                                value={b.title}
+                                onChange={e => updateBlock(b.id, { title: e.target.value })}
+                                placeholder="Judul Blok Acuan..."
+                                className="flex-1 font-bold text-xs text-[#142620] bg-transparent border-b border-transparent hover:border-[#cbdcd0] focus:border-[#205c49] outline-none px-1 py-0.5"
+                              />
+                            </div>
+
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <button
+                                type="button"
+                                disabled={expandingBlockId === b.id}
+                                onClick={() => handleElaborateBlock(b)}
+                                className="px-2.5 py-1 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-[11px] font-semibold transition-all flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                                title="Gunakan AI untuk memperinci dan menyempurnakan isi blok acuan ini"
+                              >
+                                {expandingBlockId === b.id ? (
+                                  <>
+                                    <RefreshCw className="w-3 h-3 animate-spin text-amber-700" />
+                                    <span>Memperinci...</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Sparkles className="w-3 h-3 text-amber-600" />
+                                    <span>Perinci via AI</span>
+                                  </>
+                                )}
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => deleteBlock(b.id)}
+                                className="p-1 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                                title="Hapus blok acuan"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Body Blok */}
+                          <div className="p-3.5 sm:px-4">
+                            <textarea
+                              rows={5}
+                              value={b.content}
+                              onChange={e => updateBlock(b.id, { content: e.target.value })}
+                              placeholder="Tuliskan isi acuan di sini secara bebas, format poin-poin atau paragraf. AI akan membaca persis seperti yang tertulis..."
+                              className="w-full px-3 py-2 rounded-xl border border-[#d6dfd5] text-xs font-mono focus:ring-2 focus:ring-[#205c49]/30 outline-none leading-relaxed bg-[#fcfdfb]"
+                            />
+                            <div className="flex items-center justify-between text-[10px] text-[#718478] mt-1.5 px-0.5">
+                              <span>Format Markdown didukung (poin -, nomor 1., tabel, bold **)</span>
+                              <span>{b.content?.length || 0} karakter</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                  )}
+                </div>
+              </div>
+
+              {/* 3. Basis Pengetahuan Bebas (Freeform Raw Knowledge) */}
+              <div className="bg-white rounded-2xl border border-[#dce4db] p-5 shadow-xs space-y-3">
+                <div className="border-b pb-2 border-[#edf1eb]">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#142620]">
+                    3. Basis Pengetahuan Bebas (Freeform Raw Knowledge)
+                  </h3>
+                  <p className="text-[11px] text-[#697c70] mt-0.5">
+                    Tempelkan teks mentah dokumen, transkrip meeting, deskripsi produk lengkap, press release, atau catatan internal apa pun.
+                  </p>
+                </div>
+                <textarea
+                  rows={6}
+                  value={data.customKnowledge || ""}
+                  onChange={e => setData(prev => ({ ...prev, customKnowledge: e.target.value }))}
+                  placeholder={`Paste dokumen panjang apa saja di sini...
+Contoh:
+Perusahaan kami didirikan tahun 2023 dengan misi merapikan alur kerja agensi digital. Kami memiliki 3 paket layanan: Starter Rp499rb, Pro Rp1,2jt, dan Enterprise custom quote. Keunggulan kami adalah sistem pelaporan realtime dan dashboard analitik terpadu...`}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#d6dfd5] text-xs focus:ring-2 focus:ring-[#205c49]/30 outline-none leading-relaxed"
+                />
+                <div className="flex items-center justify-between text-[10px] text-[#718478] px-0.5">
+                  <span>AI otomatis mengekstrak fakta penting dari teks ini saat memproduksi konten</span>
+                  <span>{data.customKnowledge?.length || 0} karakter</span>
+                </div>
+              </div>
+
+              {/* 4. Instruksi Persona & Peran Khusus AI (AI Persona / Roleplay) */}
+              <div className="bg-white rounded-2xl border border-[#dce4db] p-5 shadow-xs space-y-3">
+                <div className="border-b pb-2 border-[#edf1eb]">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#142620]">
+                    4. Instruksi Persona & Peran Khusus AI (AI Persona / Roleplay)
+                  </h3>
+                  <p className="text-[11px] text-[#697c70] mt-0.5">
+                    Instruksi bagaimana AI harus berperilaku secara spesifik saat berperan sebagai copywriter, perencana konten, atau konsultan brand ini.
+                  </p>
+                </div>
+                <textarea
+                  rows={4}
+                  value={data.aiPersonaInstructions || ""}
+                  onChange={e => setData(prev => ({ ...prev, aiPersonaInstructions: e.target.value }))}
+                  placeholder={`Contoh:
+Berperilakulah seperti Senior Growth Marketer & Creative Director yang tajam, blak-blakan, namun ramah. Jangan pernah gunakan gaya bahasa kaku korporat. Utamakan sudut pandang audiens yang skeptis terhadap janji manis...`}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#d6dfd5] text-xs focus:ring-2 focus:ring-[#205c49]/30 outline-none leading-relaxed"
+                />
+                <div className="flex items-center justify-between text-[10px] text-[#718478] px-0.5">
+                  <span>Instruksi ini akan disuntikkan ke setiap prompt pembuatan konten AI</span>
+                  <span>{data.aiPersonaInstructions?.length || 0} karakter</span>
                 </div>
               </div>
             </div>
@@ -2425,7 +2692,7 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
                           <div className={`text-xs font-bold leading-tight ${isSelected ? 'text-[#205c49]' : 'text-[#183127]'}`}>
                             {cat.label}
                           </div>
-                          <div className="text-[10px] text-[#697d70] truncate mt-0.5">{cat.sub}</div>
+                          {(cat as any).sub && <div className="text-[10px] text-[#697d70] truncate mt-0.5">{(cat as any).sub}</div>}
                         </div>
                       </button>
                     );
@@ -2500,12 +2767,12 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
                             : 'bg-white border-[#dce5db] hover:border-[#b5c7b8] hover:bg-[#f6faf4]'
                         }`}
                       >
-                        <div className="text-xl mb-1">{s.icon}</div>
+                        <div className="text-xl mb-1">{(s as any).icon || '🏢'}</div>
                         <div>
                           <div className={`text-xs font-bold leading-tight ${isSelected ? 'text-[#205c49]' : 'text-[#183127]'}`}>
                             {s.label}
                           </div>
-                          <div className="text-[10px] text-[#697d70] truncate mt-0.5">{s.sub}</div>
+                          <div className="text-[10px] text-[#697d70] truncate mt-0.5">{s.desc}</div>
                         </div>
                       </button>
                     );
@@ -3440,7 +3707,7 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
                   <input
                     type="text"
                     value={newDirective}
-                    onChange={e => setNewBrandDirective(e.target.value)}
+                    onChange={e => setNewDirective(e.target.value)}
                     placeholder="Ketik aturan khusus (contoh: Selalu sertakan 3 hashtag brand di akhir caption)..."
                     className="flex-1 px-3.5 py-2 rounded-xl border border-[#cbd8cb] text-xs outline-none bg-white"
                   />

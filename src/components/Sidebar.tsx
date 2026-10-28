@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrandBrain, ContentDocument } from '../types';
+import { BrandBrainShortcuts } from './BrandBrainShortcuts';
 import {
   Calendar,
   Sparkles,
@@ -255,6 +256,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           </nav>
         </div>
+
+        {/* App Standalone Pintasan & Konektor Brand Brain */}
+        <BrandBrainShortcuts brand={brand} />
 
         {/* Distribusi & Integrasi Platform */}
         <div>
