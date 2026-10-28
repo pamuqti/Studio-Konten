@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "./brand-brain.css";
 
 @layer base {
   body {

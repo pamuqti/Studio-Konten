@@ -488,12 +488,15 @@ export async function extractBrandBrainAi(rawText: string): Promise<{ brand: Par
   const clientKey = getGeminiApiKey();
   if (clientKey) {
     const system = `Anda adalah Chief Brand Strategist & Creative Director senior.
-Tugas Anda membaca deskripsi produk pengguna, lalu merumuskan BRAND BRAIN lengkap (name, category, product, brandPromise, audience, usp, tone, cta, color, positioning, competitorContext, audienceDNA, offerConversionDNA, proofCredibility, personalityVoice, visualDNA, contentDNA, brandMemory).`;
+Tugas Anda membaca deskripsi produk pengguna, lalu merumuskan BRAND BRAIN lengkap (name, category, product, brandPromise, audience, usp, tone, cta, color, positioning, audienceDNA, personalityVoice, contentDNA, brandMemory).`;
     const schema = {
       type: "OBJECT",
       properties: {
         name: { type: "STRING" },
         category: { type: "STRING" },
+        industry: { type: "STRING" },
+        scale: { type: "STRING" },
+        scaleLabel: { type: "STRING" },
         product: { type: "STRING" },
         brandPromise: { type: "STRING" },
         audience: { type: "STRING" },
@@ -513,139 +516,13 @@ Tugas Anda membaca deskripsi produk pengguna, lalu merumuskan BRAND BRAIN lengka
             unlike: { type: "STRING" },
             statement: { type: "STRING" }
           }
-        },
-        competitorContext: {
-          type: "OBJECT",
-          properties: {
-            directCompetitors: { type: "ARRAY", items: { type: "STRING" } },
-            indirectCompetitors: { type: "ARRAY", items: { type: "STRING" } },
-            competitorWeakness: { type: "STRING" },
-            whatWeWillNeverDo: { type: "ARRAY", items: { type: "STRING" } }
-          }
-        },
-        audienceDNA: {
-          type: "OBJECT",
-          properties: {
-            primary: { type: "STRING" },
-            demographics: {
-              type: "OBJECT",
-              properties: {
-                age: { type: "STRING" },
-                gender: { type: "STRING" },
-                location: { type: "STRING" },
-                occupation: { type: "STRING" },
-                lifestyle: { type: "STRING" }
-              }
-            },
-            psychographics: {
-              type: "OBJECT",
-              properties: {
-                painPoints: { type: "ARRAY", items: { type: "STRING" } },
-                desires: { type: "ARRAY", items: { type: "STRING" } },
-                objections: { type: "ARRAY", items: { type: "STRING" } }
-              }
-            },
-            contentBehavior: {
-              type: "OBJECT",
-              properties: {
-                scrollStoppers: { type: "STRING" },
-                commentTriggers: { type: "STRING" }
-              }
-            }
-          }
-        },
-        offerConversionDNA: {
-          type: "OBJECT",
-          properties: {
-            mainOffer: { type: "STRING" },
-            entryOffer: { type: "STRING" },
-            priceRange: { type: "STRING" },
-            riskReversal: { type: "STRING" },
-            purchasePath: { type: "STRING" }
-          }
-        },
-        proofCredibility: {
-          type: "OBJECT",
-          properties: {
-            hardProofPoints: { type: "ARRAY", items: { type: "STRING" } },
-            caseTransformations: { type: "ARRAY", items: { type: "STRING" } },
-            customerVoiceRaw: { type: "ARRAY", items: { type: "STRING" } }
-          }
-        },
-        personalityVoice: {
-          type: "OBJECT",
-          properties: {
-            humanPersona: { type: "STRING" },
-            voiceDo: { type: "ARRAY", items: { type: "STRING" } },
-            voiceDont: { type: "ARRAY", items: { type: "STRING" } },
-            signatureWords: { type: "ARRAY", items: { type: "STRING" } },
-            forbiddenWords: { type: "ARRAY", items: { type: "STRING" } }
-          }
-        },
-        visualDNA: {
-          type: "OBJECT",
-          properties: {
-            photographyStyle: { type: "ARRAY", items: { type: "STRING" } },
-            visualDoNotUse: { type: "ARRAY", items: { type: "STRING" } }
-          }
-        },
-        contentDNA: {
-          type: "OBJECT",
-          properties: {
-            pillars: {
-              type: "ARRAY",
-              items: {
-                type: "OBJECT",
-                properties: {
-                  name: { type: "STRING" },
-                  percentage: { type: "NUMBER" },
-                  description: { type: "STRING" }
-                }
-              }
-            },
-            funnelCTA: {
-              type: "OBJECT",
-              properties: {
-                awareness: { type: "STRING" },
-                consideration: { type: "STRING" },
-                conversion: { type: "STRING" },
-                retention: { type: "STRING" }
-              }
-            }
-          }
-        },
-        brandMemory: {
-          type: "OBJECT",
-          properties: {
-            alwaysSay: { type: "ARRAY", items: { type: "STRING" } },
-            neverSay: { type: "ARRAY", items: { type: "STRING" } },
-            claimsGuardrail: {
-              type: "OBJECT",
-              properties: {
-                allowed: { type: "ARRAY", items: { type: "STRING" } },
-                forbidden: { type: "ARRAY", items: { type: "STRING" } }
-              }
-            }
-          }
         }
       },
       required: ["name", "category", "product", "audience", "usp", "tone", "cta", "color", "analysisSummary"]
     };
     const res = await callDirectGeminiApi(clientKey, activeModel, system, rawText, schema);
     if (res) {
-      const fieldStatus: Record<string, 'confirmed' | 'ai_suggested' | 'missing'> = {
-        foundation: res.brandPromise ? 'ai_suggested' : 'missing',
-        positioning: res.positioning?.statement ? 'ai_suggested' : 'missing',
-        competitorContext: res.competitorContext?.directCompetitors?.length ? 'ai_suggested' : 'missing',
-        audienceDNA: res.audienceDNA?.psychographics?.painPoints?.length ? 'ai_suggested' : 'missing',
-        offerConversionDNA: res.offerConversionDNA?.mainOffer ? 'ai_suggested' : 'missing',
-        proofCredibility: res.proofCredibility?.hardProofPoints?.length ? 'ai_suggested' : 'missing',
-        personalityVoice: res.personalityVoice?.humanPersona ? 'ai_suggested' : 'missing',
-        visualDNA: res.visualDNA?.photographyStyle?.length ? 'ai_suggested' : 'missing',
-        contentDNA: res.contentDNA?.pillars?.length ? 'ai_suggested' : 'missing',
-        brandMemory: res.brandMemory?.alwaysSay?.length ? 'ai_suggested' : 'missing',
-      };
-      return { brand: { ...res, fieldStatus }, analysisSummary: res.analysisSummary };
+      return { brand: res, analysisSummary: res.analysisSummary };
     }
   }
 
@@ -668,45 +545,6 @@ Tugas Anda membaca deskripsi produk pengguna, lalu merumuskan BRAND BRAIN lengka
     },
     analysisSummary: "Profil brand berhasil disaring dari deskripsi awal."
   };
-}
-
-export async function elaborateCustomBlockAi(
-  title: string,
-  category: string,
-  currentContent: string,
-  brand: BrandBrain
-): Promise<string> {
-  const clientKey = getGeminiApiKey();
-  if (!clientKey) {
-    throw new Error('Gemini API Key belum dimasukkan. Tambahkan API Key di menu Pengaturan.');
-  }
-
-  const brandPrompt = compileBrandBrainPrompt(brand);
-  const prompt = `Anda adalah Chief Brand Strategist & Creative Director senior.
-Bantu kembangkan dan sempurnakan blok acuan Brand Brain berikut untuk brand "${brand?.name || "Brand"}":
-
-Judul Blok: ${title}
-Kategori: ${category}
-Draf Konten Saat Ini:
-"""
-${currentContent || "(Belum ada konten, buatkan yang komprehensif dari awal)"}
-"""
-
-${brandPrompt}
-
-Instruksi:
-1. Buat acuan yang tajam, sangat praktis, aplikatif, dan langsung bisa dijadikan pedoman mutlak bagi tim kreatif / AI saat menulis konten.
-2. Gunakan format poin-poin rapi (bullet points atau nomor) berbahasa Indonesia.
-3. Hindari kalimat klise atau teori mengambang. Berikan instruksi konkret, contoh naskah, atau data terukur.
-4. Output HANYA berupa teks isi blok tersebut (tanpa salam pembuka/penutup).`;
-
-  const res = await callDirectGeminiApi(
-    clientKey,
-    activeModel,
-    'Anda adalah Senior Brand Strategist & Content Architect.',
-    prompt
-  );
-  return typeof res === 'string' ? res.trim() : JSON.stringify(res, null, 2);
 }
 
 export async function generateTrendBridgeAi(trendName: string, topic: string, brand: BrandBrain) {
