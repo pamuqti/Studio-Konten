@@ -672,7 +672,7 @@ export default function App() {
           onOpenPool={() => setIsPoolDrawerOpen(true)}
           onOpenConnections={() => setIsConnectionsModalOpen(true)}
           approvedCount={approvedItems.length}
-          connectedCount={Object.values(appState.connections).filter(c => c.status === 'connected').length}
+          connectedCount={Object.values(appState.connections).filter((c: any) => c?.status === 'connected').length}
           onNotify={addToast}
           onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
         />

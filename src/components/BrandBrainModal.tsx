@@ -270,6 +270,17 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
     }));
   };
 
+  const updateNewBrandPositioning = (field: string, val: string) => {
+    setNewBrandForm(prev => {
+      const pos = { ...(prev.positioning || {}), [field]: val };
+      const stmt = `${prev.name || "Brand"} adalah ${pos.weAre || "solusi"} untuk ${pos.forAudience || "audiens"} yang butuh ${pos.whoNeed || "jawaban"}, karena ${pos.becauseWhy || "teruji"}, berbeda dari ${pos.unlike || "alternatif lain"}.`;
+      return {
+        ...prev,
+        positioning: { ...pos, statement: pos.statement && field !== 'statement' ? stmt : pos.statement || stmt }
+      };
+    });
+  };
+
   const updateNewBrandAudienceDemographics = (field: string, val: any) => {
     setNewBrandForm(prev => ({
       ...prev,
@@ -309,7 +320,7 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
     }));
   };
 
-  const updateNewBrandVoiceArray = (field: 'archetypes' | 'emotionalTriggers' | 'styleGuardrails', val: string[]) => {
+  const updateNewBrandVoiceArray = (field: string, val: any) => {
     setNewBrandForm(prev => ({
       ...prev,
       personalityVoice: {
@@ -319,7 +330,16 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
     }));
   };
 
-  const updateNewBrandPlatformAccount = (platformKey: string, field: string, val: any) => {
+  const updateNewBrandPlatformAccount = (platformKey: string, val: any) => {
+    setNewBrandForm(prev => ({
+      ...prev,
+      platformAccounts: {
+        ...(prev.platformAccounts || {}),
+        [platformKey]: val
+      }
+    }));
+  };
+  const _unusedUpdatePlatform = (platformKey: string, field: string, val: any) => {
     setNewBrandForm(prev => ({
       ...prev,
       socialAccounts: {
@@ -2425,7 +2445,7 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
                           <div className={`text-xs font-bold leading-tight ${isSelected ? 'text-[#205c49]' : 'text-[#183127]'}`}>
                             {cat.label}
                           </div>
-                          <div className="text-[10px] text-[#697d70] truncate mt-0.5">{cat.sub}</div>
+                          <div className="text-[10px] text-[#697d70] truncate mt-0.5">{(cat as any).sub}</div>
                         </div>
                       </button>
                     );
@@ -2500,12 +2520,12 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
                             : 'bg-white border-[#dce5db] hover:border-[#b5c7b8] hover:bg-[#f6faf4]'
                         }`}
                       >
-                        <div className="text-xl mb-1">{s.icon}</div>
+                        <div className="text-xl mb-1">{(s as any).icon || "🏢"}</div>
                         <div>
                           <div className={`text-xs font-bold leading-tight ${isSelected ? 'text-[#205c49]' : 'text-[#183127]'}`}>
                             {s.label}
                           </div>
-                          <div className="text-[10px] text-[#697d70] truncate mt-0.5">{s.sub}</div>
+                          <div className="text-[10px] text-[#697d70] truncate mt-0.5">{(s as any).desc || (s as any).sub}</div>
                         </div>
                       </button>
                     );
@@ -3440,7 +3460,7 @@ Tolong rumuskan identitas Brand Brain 9 pilar komprehensif untuk brand ini:
                   <input
                     type="text"
                     value={newDirective}
-                    onChange={e => setNewBrandDirective(e.target.value)}
+                    onChange={e => setNewDirective(e.target.value)}
                     placeholder="Ketik aturan khusus (contoh: Selalu sertakan 3 hashtag brand di akhir caption)..."
                     className="flex-1 px-3.5 py-2 rounded-xl border border-[#cbd8cb] text-xs outline-none bg-white"
                   />
