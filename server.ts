@@ -12,7 +12,67 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-app.use(express.json({ limit: '50mb' }));
+app.disable('x-powered-by');
+if (process.env.TRUST_PROXY) app.set('trust proxy', Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY);
+app.use(express.json({ limit: '1mb' }));
+
+// Tolak request /api dari origin lain (mencegah situs asing memakai server ini lewat browser pengguna)
+const allowedOrigins = new Set(
+  (process.env.ALLOWED_ORIGINS || process.env.APP_URL || '')
+    .split(',')
+    .map(o => o.trim().replace(/\/$/, ''))
+    .filter(Boolean)
+);
+
+app.use('/api', (req: Request, res: Response, next) => {
+  const origin = req.headers.origin;
+  if (!origin) return next();
+  let originHost = '';
+  try {
+    originHost = new URL(origin).host;
+  } catch {
+    return res.status(403).json({ error: 'Origin tidak valid' });
+  }
+  if (originHost === req.headers.host || allowedOrigins.has(origin)) return next();
+  return res.status(403).json({ error: 'Origin tidak diizinkan' });
+});
+
+// Rate limit sederhana per IP (in-memory, cukup untuk satu instance server)
+function rateLimit(maxPerMinute: number) {
+  const hits = new Map<string, { count: number; resetAt: number }>();
+  return (req: Request, res: Response, next: () => void) => {
+    const now = Date.now();
+    const ip = req.ip || req.socket.remoteAddress || 'unknown';
+    const entry = hits.get(ip);
+    if (!entry || entry.resetAt <= now) {
+      if (hits.size > 10000) hits.clear();
+      hits.set(ip, { count: 1, resetAt: now + 60_000 });
+      return next();
+    }
+    if (++entry.count > maxPerMinute) {
+      res.setHeader('Retry-After', String(Math.ceil((entry.resetAt - now) / 1000)));
+      return res.status(429).json({ error: 'Terlalu banyak permintaan. Coba lagi sebentar.' });
+    }
+    return next();
+  };
+}
+
+app.use('/api/generate', rateLimit(10));
+app.use('/api/ai', rateLimit(20));
+app.use('/api', rateLimit(60));
+
+// Pesan error aman untuk klien; detail lengkap tetap dicatat di log server
+function clientError(err: any, fallback: string) {
+  return process.env.NODE_ENV === 'production' ? fallback : (err?.message || fallback);
+}
+
+// ID akun Meta/Threads selalu numerik; mencegah manipulasi path URL Graph API
+function isValidAccountId(id: unknown): boolean {
+  return typeof id === 'string' && /^\d{1,32}$/.test(id);
+}
+
+const ALLOWED_UPLOAD_TYPES = /^(image\/(jpeg|png|webp|gif)|video\/(mp4|quicktime|webm))$/;
+const MAX_UPLOAD_BYTES = Number(process.env.MAX_UPLOAD_MB || 500) * 1024 * 1024;
 
 // Helper inisialisasi client Cloudflare R2
 function getR2Client(config?: any) {
@@ -105,7 +165,7 @@ Masing-masing konsep memiliki properti: pilar, hook, sudutKonten, briefVisual, c
     return res.json({ items });
   } catch (error: any) {
     console.error('Error in /api/generate:', error);
-    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+    return res.status(500).json({ error: clientError(error, 'Gagal memproses permintaan AI') });
   }
 });
 
@@ -154,7 +214,7 @@ Gaya naskah: ${style || 'Storytelling & Relatable'}. CTA: ${brand?.cta || 'Tulis
     return res.json({ variations: parsed.variations || [] });
   } catch (error: any) {
     console.error('Error in /api/ai/polish-caption:', error);
-    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+    return res.status(500).json({ error: clientError(error, 'Gagal memproses permintaan AI') });
   }
 });
 
@@ -201,7 +261,7 @@ Topik: ${topic || 'Konten Brand'}.`;
     return res.json({ hooks: parsed.hooks || [] });
   } catch (error: any) {
     console.error('Error in /api/ai/hook-ideas:', error);
-    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+    return res.status(500).json({ error: clientError(error, 'Gagal memproses permintaan AI') });
   }
 });
 
@@ -246,7 +306,7 @@ app.post('/api/ai/extract-brand', async (req: Request, res: Response) => {
     return res.json({ brand: parsed, analysisSummary: parsed.analysisSummary });
   } catch (error: any) {
     console.error('Error in /api/ai/extract-brand:', error);
-    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+    return res.status(500).json({ error: clientError(error, 'Gagal memproses permintaan AI') });
   }
 });
 
@@ -254,6 +314,13 @@ app.post('/api/ai/extract-brand', async (req: Request, res: Response) => {
 app.post('/api/r2/presign', async (req: Request, res: Response) => {
   try {
     const { filename, contentType, sizeBytes, customConfig } = req.body;
+    if (typeof contentType !== 'string' || !ALLOWED_UPLOAD_TYPES.test(contentType)) {
+      return res.status(400).json({ error: 'Tipe file tidak didukung. Gunakan gambar (JPG/PNG/WebP/GIF) atau video (MP4/MOV/WebM).' });
+    }
+    if (!Number.isInteger(sizeBytes) || sizeBytes <= 0 || sizeBytes > MAX_UPLOAD_BYTES) {
+      return res.status(400).json({ error: `Ukuran file harus di bawah ${Math.round(MAX_UPLOAD_BYTES / 1024 / 1024)} MB.` });
+    }
+
     const r2 = getR2Client(customConfig);
     const bucket = customConfig?.bucketName || process.env.R2_BUCKET_NAME || 'ruang-konten-media';
     const publicBaseUrl = (customConfig?.publicUrl || process.env.R2_PUBLIC_URL || '').replace(/\/$/, '');
@@ -274,10 +341,14 @@ app.post('/api/r2/presign', async (req: Request, res: Response) => {
     const command = new PutObjectCommand({
       Bucket: bucket,
       Key: r2Key,
-      ContentType: contentType
+      ContentType: contentType,
+      ContentLength: sizeBytes
     });
 
-    const uploadUrl = await getSignedUrl(r2, command, { expiresIn: 1200 });
+    const uploadUrl = await getSignedUrl(r2, command, {
+      expiresIn: 600,
+      signableHeaders: new Set(['content-type', 'content-length'])
+    });
     const publicUrl = publicBaseUrl ? `${publicBaseUrl}/${r2Key}` : uploadUrl.split('?')[0];
 
     return res.json({
@@ -288,7 +359,7 @@ app.post('/api/r2/presign', async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     console.error('Error in /api/r2/presign:', err);
-    return res.status(500).json({ error: err.message || 'Gagal membuat URL upload R2' });
+    return res.status(500).json({ error: clientError(err, 'Gagal membuat URL upload R2') });
   }
 });
 
@@ -308,10 +379,15 @@ app.post('/api/social/test-connection', async (req: Request, res: Response) => {
       message: `Token untuk ${platform} belum dimasukkan.`
     });
   }
+  if (accountId && !isValidAccountId(accountId)) {
+    return res.json({ success: false, message: 'Account ID hanya boleh berisi angka.' });
+  }
 
   try {
     if (platform === 'facebook') {
-      const metaRes = await fetch(`https://graph.facebook.com/v21.0/${accountId || 'me'}?fields=id,name,link&access_token=${token}`);
+      const metaRes = await fetch(`https://graph.facebook.com/v21.0/${accountId || 'me'}?fields=id,name,link`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       const data = await metaRes.json();
       if (data.error) throw new Error(data.error.message);
 
@@ -324,7 +400,9 @@ app.post('/api/social/test-connection', async (req: Request, res: Response) => {
     }
 
     if (platform === 'instagram') {
-      const igRes = await fetch(`https://graph.facebook.com/v21.0/${accountId || 'me'}?fields=id,username,name&access_token=${token}`);
+      const igRes = await fetch(`https://graph.facebook.com/v21.0/${accountId || 'me'}?fields=id,username,name`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       const data = await igRes.json();
       if (data.error) throw new Error(data.error.message);
 
@@ -337,7 +415,7 @@ app.post('/api/social/test-connection', async (req: Request, res: Response) => {
     }
 
     if (platform === 'threads') {
-      const thRes = await fetch(`https://graph.threads.net/v1.0/me?fields=id,username,name&access_token=${token}`);
+      const thRes = await fetch(`https://graph.threads.net/v1.0/me?fields=id,username,name&access_token=${encodeURIComponent(token || '')}`);
       const data = await thRes.json();
       if (data.error) throw new Error(data.error.message);
 
@@ -407,22 +485,16 @@ app.post('/api/social/publish', async (req: Request, res: Response) => {
     const scheduledUnix = Math.floor(new Date(post.scheduledAtIso).getTime() / 1000);
 
     try {
-      if (pf === 'youtube') {
-        results.youtube = {
-          status: 'native_scheduled',
-          externalPostId: `yt-${Date.now()}`,
-          externalPostUrl: 'https://studio.youtube.com',
-          message: `Video dijadwalkan di YouTube Studio untuk tayang pada ${post.scheduledDate} ${post.scheduledTime} WIB`
-        };
-      } else if (pf === 'facebook') {
+      if (pf === 'facebook') {
         if (!token) {
-          results.facebook = {
-            status: 'native_scheduled',
-            externalPostId: `fb-sim-${Date.now()}`,
-            externalPostUrl: 'https://business.facebook.com',
-            message: 'Tersimulasi Masuk ke Scheduled Posts Meta Business Suite'
-          };
+          throw new Error('Token Facebook belum dihubungkan. Konten tidak dijadwalkan.');
         } else {
+          if (conn.accountId && !isValidAccountId(conn.accountId)) {
+            throw new Error('Account ID Facebook tidak valid.');
+          }
+          if (!Number.isFinite(scheduledUnix)) {
+            throw new Error('Waktu jadwal tidak valid.');
+          }
           const endpoint = mediaUrl
             ? `https://graph.facebook.com/v21.0/${conn.accountId || 'me'}/photos`
             : `https://graph.facebook.com/v21.0/${conn.accountId || 'me'}/feed`;
@@ -450,30 +522,9 @@ app.post('/api/social/publish', async (req: Request, res: Response) => {
             message: 'Berhasil didaftarkan ke Jadwal Halaman Facebook'
           };
         }
-      } else if (pf === 'tiktok') {
-        const mode = post.platformOverrides?.tiktok?.publishMode || 'inbox_draft';
-        results.tiktok = {
-          status: mode === 'inbox_draft' ? 'inbox_sent' : 'published',
-          externalPostId: `tt-${Date.now()}`,
-          externalPostUrl: 'https://www.tiktok.com',
-          message: mode === 'inbox_draft'
-            ? 'Draf video berhasil dikirim ke Inbox Aplikasi TikTok pengguna di HP!'
-            : 'Video berhasil dipublikasikan langsung ke akun TikTok!'
-        };
-      } else if (pf === 'instagram') {
-        results.instagram = {
-          status: 'published',
-          externalPostId: `ig-${Date.now()}`,
-          externalPostUrl: 'https://instagram.com',
-          message: 'Konten Instagram berhasil dipublikasikan via Media Container API!'
-        };
-      } else if (pf === 'threads') {
-        results.threads = {
-          status: 'published',
-          externalPostId: `th-${Date.now()}`,
-          externalPostUrl: 'https://threads.net',
-          message: 'Utas berhasil dipublikasikan ke Threads!'
-        };
+      } else {
+        // Integrasi YouTube, TikTok, Instagram & Threads belum diimplementasikan: laporkan apa adanya, jangan pura-pura sukses
+        throw new Error(`Publikasi otomatis ke ${pf} belum didukung. Unggah manual lewat aplikasi ${pf}.`);
       }
     } catch (err: any) {
       results[pf] = {
@@ -494,6 +545,8 @@ app.get('/api/health', (req: Request, res: Response) => {
 // Server listener & Vite mounting
 const isProduction = process.env.NODE_ENV === 'production';
 const PORT = Number(process.env.PORT) || 3000;
+// Dev hanya bisa diakses dari komputer ini; set HOST=0.0.0.0 bila memang perlu diakses dari jaringan
+const HOST = process.env.HOST || (isProduction ? '0.0.0.0' : '127.0.0.1');
 
 async function startServer() {
   if (!isProduction) {
@@ -510,7 +563,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  app.listen(PORT, HOST, () => {
     console.log(`Ruang Konten server running at http://localhost:${PORT}`);
   });
 }

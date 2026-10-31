@@ -580,8 +580,10 @@ export default function App() {
       let hasNativeScheduled = false;
       let hasInboxSent = false;
       let hasPublished = false;
+      const failedPlatforms: string[] = [];
 
       Object.entries(res.results || {}).forEach(([pf, r]: any) => {
+        if (r.status === 'failed') failedPlatforms.push(pf);
         updatedLogs[pf] = {
           platform: pf,
           mode: post.platformOverrides?.[pf as SocialPlatformKey]?.publishMode || 'auto_queue',
@@ -599,7 +601,12 @@ export default function App() {
         if (r.status === 'published') hasPublished = true;
       });
 
-      const overallStatus = hasPublished
+      const succeededCount = Object.keys(updatedLogs).length - failedPlatforms.length;
+      const overallStatus: ScheduledPost['overallStatus'] = succeededCount === 0
+        ? 'failed'
+        : failedPlatforms.length > 0
+        ? 'partial'
+        : hasPublished
         ? 'published'
         : hasNativeScheduled
         ? 'native_scheduled'
@@ -615,7 +622,12 @@ export default function App() {
       };
 
       handleSaveScheduledPost(finalizedPost);
-      addToast('Konten berhasil diproses ke platform target!', 'success');
+      if (failedPlatforms.length === 0) {
+        addToast('Konten berhasil diproses ke platform target!', 'success');
+      } else {
+        const firstError = res.results?.[failedPlatforms[0]]?.errorMessage;
+        addToast(`Gagal di ${failedPlatforms.join(', ')}${firstError ? `: ${firstError}` : ''}`, 'error');
+      }
     } catch (e: any) {
       addToast(e.message || 'Gagal memproses ke platform', 'error');
     }
