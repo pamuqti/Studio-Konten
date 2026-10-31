@@ -1,0 +1,3392 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brand Brain Studio — Sistem DNA & Acuan Strategis Brand</title>
+  <meta name="description" content="Aplikasi Standalone Brand Brain Studio: Satu Sumber Kebenaran Strategis untuk Identitas, Karakter, Posisi Pasar, dan Instruksi AI Brand.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"DM Sans"', '"Outfit"', 'system-ui', 'sans-serif'],
+            heading: ['"Outfit"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            onicx: {
+              bg: '#F8F6F1',
+              card: '#FFFFFF',
+              inset: '#F8F7FC',
+              border: '#EAE6F3',
+              primary: '#6C43E3',
+              accent: '#ED8A33',
+              dark: '#1B152C',
+              muted: '#736C87',
+              text: '#1B152C'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'DM Sans', 'Outfit', system-ui, sans-serif;
+      background-color: #F8F6F1;
+      color: #1B152C;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, h4, h5, h6, .font-heading {
+      font-family: 'Outfit', sans-serif;
+      color: #1B152C;
+    }
+    
+    /* Onicx Bento Card & Inset */
+    .gridx-card, .onicx-card {
+      background: #FFFFFF;
+      border: 1px solid #EAE6F3;
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(108, 67, 227, 0.04);
+      transition: all 0.25s ease;
+    }
+
+    .gridx-inset, .onicx-inset {
+      background: #F8F7FC;
+      border: 1px solid #EAE6F3;
+      border-radius: 14px;
+    }
+
+    /* 10-Tab Responsive Grid (Onicx Bento Pills) */
+    .bbx-grid10 {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+    @media (min-width: 1024px) {
+      .bbx-grid10 {
+        grid-template-columns: repeat(9, minmax(0, 1fr));
+      }
+    }
+
+    .bbx-tab-btn {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      user-select: none;
+      background: #F8F7FC;
+      border: 1px solid #EAE6F3;
+      border-radius: 16px;
+      color: #736C87;
+    }
+    .bbx-tab-btn:hover:not(.active) {
+      background-color: #F4F1FA;
+      border-color: #D7D0EB;
+      color: #1B152C;
+      transform: translateY(-1px);
+    }
+    .bbx-tab-btn.active {
+      background-color: #1B152C;
+      color: #FFFFFF;
+      border-color: #1B152C;
+      box-shadow: 0 4px 16px rgba(27, 21, 44, 0.16);
+    }
+    .bbx-tab-btn.active .tab-sub {
+      color: #C4B5FD;
+    }
+
+    /* Onicx Signature Button */
+    .theme-btn, .btn-onicx {
+      background: linear-gradient(90deg, #A051E6 0%, #6C43E3 100%);
+      color: #FFFFFF;
+      border-radius: 9999px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 14px rgba(108, 67, 227, 0.25);
+    }
+    .theme-btn:hover, .btn-onicx:hover {
+      background: #ED8A33;
+      color: #FFFFFF;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(237, 138, 51, 0.3);
+    }
+
+    .theme-btn-dark {
+      background: #1B152C;
+      color: #FFFFFF;
+      border-radius: 9999px;
+      transition: all 0.25s ease;
+    }
+    .theme-btn-dark:hover {
+      background: #6C43E3;
+      color: #FFFFFF;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(108, 67, 227, 0.25);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F8F6F1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #DCD7E8;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6C43E3;
+    }
+
+    /* Range slider Onicx style */
+    input[type=range] {
+      accent-color: #6C43E3;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <div id="root"></div>
+
+  <script>
+    // --- ICON HELPER (Clean inline SVG to avoid external icon dependency) ---
+    const e = React.createElement;
+    const { useState, useEffect, useRef, useMemo } = React;
+
+    function Icon({ name, className = "w-4 h-4", size }) {
+      const s = size ? { width: size, height: size } : {};
+      const strokeProps = {
+        fill: "none",
+        viewBox: "0 0 24 24",
+        strokeWidth: 2,
+        stroke: "currentColor",
+        className,
+        style: s
+      };
+
+      switch(name) {
+        case 'sparkles':
+          return e('svg', strokeProps,
+            e('path', { strokeLinecap: 'round', strokeLinejoin: 'round', d: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z' })
+          );
+        case 'upload':
+          return e('svg', strokeProps,
+            e('path', { strokeLinecap: 'round', strokeLinejoin: 'round', d: 'M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5' })
+          );
+        case 'download':
+          return e('svg', strokeProps,
+            e('path', { strokeLinecap: 'round', strokeLinejoin: 'round', d: 'M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3' })
+          );
+        case 'copy':
+          return e('svg', strokeProps,
+            e('rect', { width: '13', height: '13', x: '9', y: '9', rx: '2', ry: '2' }),
+            e('path', { d: 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1' })
+          );
+        case 'check':
+          return e('svg', strokeProps,
+            e('polyline', { points: '20 6 9 17 4 12' })
+          );
+        case 'plus':
+          return e('svg', strokeProps,
+            e('path', { strokeLinecap: 'round', strokeLinejoin: 'round', d: 'M12 4.5v15m7.5-7.5h-15' })
+          );
+        case 'trash':
+          return e('svg', strokeProps,
+            e('path', { strokeLinecap: 'round', strokeLinejoin: 'round', d: 'M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0' })
+          );
+        case 'refresh':
+          return e('svg', strokeProps,
+            e('path', { strokeLinecap: 'round', strokeLinejoin: 'round', d: 'M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99' })
+          );
+        case 'key':
+          return e('svg', strokeProps,
+            e('path', { strokeLinecap: 'round', strokeLinejoin: 'round', d: 'M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z' })
+          );
+        case 'brain':
+          return e('svg', strokeProps,
+            e('path', { strokeLinecap: 'round', strokeLinejoin: 'round', d: 'M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z' }),
+            e('circle', { cx: '12', cy: '12', r: '3' })
+          );
+        default:
+          return e('svg', strokeProps,
+            e('circle', { cx: '12', cy: '12', r: '9' })
+          );
+      }
+    }
+
+    // --- DEFAULT TRAJECTO BRAND BRAIN (Global Standard) ---
+    const DEFAULT_TRAJECTO = {
+      id: "brand-trajecto-default",
+      name: "Trajecto",
+      category: "Aplikasi Produktivitas & Life Planner",
+      product: "All-in-One Personal Productivity, Time-Blocking & Agile Focus Operating System",
+      brandPromise: "Membantu knowledge worker dan freelancer menyelesaikan kerjaan prioritas sebelum jam 5 sore tanpa stres dan tanpa terjebak siklus bikin template berjam-jam.",
+      mission: "Membebaskan orang dari ilusi produktif (productive procrastination) menuju eksekusi nyata yang tenang dan terarah.",
+      vision: "Menjadi sistem operasi fokus personal harian nomor satu untuk talenta mandiri di Asia Tenggara.",
+      values: [
+        "Eksekusi Nyata > Estetika Semu",
+        "Zero-Setup Bloatware",
+        "Kerja Selesai, Hidup Dimulai"
+      ],
+      audience: "Freelancer, remote worker, dan solopreneur usia 22-35 tahun yang burnout karena to-do list menumpuk",
+      tone: "Santai, lugas, jujur (no-BS), relatable seperti teman kerja yang pintar",
+      usp: "Agile Sprint personal 1-hari & visual time-blocking interaktif langsung di browser tanpa ribet setup template",
+      cta: "Coba sprint gratis pertama lo hari ini di trajecto.web.app",
+      color: "#0284c7",
+      website: "https://trajecto.web.app",
+      instagramHandle: "@trajecto.app",
+      platformAccounts: {
+        instagram: "@trajecto.app",
+        tiktok: "@trajecto.id",
+        threads: "@trajecto.app",
+        linkedin: "company/trajecto-app",
+        youtube: "@trajecto-app",
+        facebook: "TrajectoApp"
+      },
+      positioning: {
+        weAre: "Personal Agile Focus Operating System",
+        forAudience: "Freelancer, remote worker, dan solopreneur",
+        whoNeed: "Sistem kerja harian yang membatasi overload dan memicu eksekusi nyata",
+        becauseWhy: "Dirancang dengan prinsip Agile Sprint 1-hari dan visual time-blocking interaktif yang zero-setup",
+        unlike: "Notion yang makan waktu setup seharian atau aplikasi to-do list pasif yang cuma menumpuk beban mental",
+        statement: "Trajecto adalah Focus Operating System untuk freelancer dan solopreneur yang butuh eksekusi harian terarah tanpa terjebak over-complicated template setup."
+      },
+      competitorContext: {
+        directCompetitors: ["Sunsama", "Akiflow", "Llama Life", "Motion"],
+        indirectCompetitors: ["Notion", "Todoist", "Buku Agenda Kertas / BuJo", "Google Calendar Polos"],
+        competitorWeakness: "Sunsama/Akiflow sangat mahal ($20+/bln) dan mewajibkan kartu kredit luar negeri; Notion terlalu rumit (notion-fatigue); Todoist cuma list pasif tanpa batasan kapasitas waktu riil.",
+        whatWeWillNeverDo: [
+          "Menjual template kosong tanpa fungsi otomatis",
+          "Memaksa pengguna menonton tutorial 1 jam sebelum bisa pakai",
+          "Menambah fitur bloatware yang bikin loading berat"
+        ]
+      },
+      audienceDNA: {
+        primary: "Freelancer & Solopreneur 22-35 tahun di Indonesia",
+        demographics: {
+          age: "22 - 35 tahun",
+          gender: "Semua gender (dominan pekerja digital)",
+          location: "Kota-kota besar Indonesia (remote / WFH / hybrid)",
+          occupation: "Freelancer, UI/UX Designer, Software Engineer, Content Creator, Konsultan",
+          lifestyle: "Coffee shop hopper, digital nomad, tech-savvy tapi lelah overcomplicated tools",
+          purchasingPower: "Menengah ke atas, bersedia bayar sekali/langganan terjangkau via QRIS"
+        },
+        psychographics: {
+          painPoints: [
+            "Daftar to-do list puluhan item yang bikin cemas sebelum mulai kerja",
+            "Notion fatigue: habis waktu berjam-jam bikin dashboard estetik alih-alih kerja riil",
+            "Tiap malam tidur dengan rasa bersalah karena merasa belum menyelesaikan hal penting",
+            "Kerja lembur tidak berujung karena batas sprint harian tidak ada"
+          ],
+          desires: [
+            "Bisa tutup laptop jam 5 sore dengan perasaan puas dan tenang",
+            "Fokus terarah hanya pada 2-3 tugas bernilai tinggi setiap hari",
+            "Alat kerja yang langsung bisa dipakai dalam 10 detik tanpa tutorial rumit"
+          ],
+          fears: [
+            "Takut tertinggal (FOMO) dan dicap tidak produktif",
+            "Takut burn-out berkepanjangan dan kehilangan passion kerja"
+          ],
+          objections: [
+            "Paling ribet setup kayak Notion/ClickUp lagi",
+            "Harus bayar subscription mahal pakai kartu kredit luar negeri",
+            "Apakah benar-benar bikin gue lebih fokus atau cuma aplikasi baru yang dianggurin?"
+          ]
+        },
+        contentBehavior: {
+          scrollStoppers: "Pengakuan jujur soal productive procrastination, perbandingan dashboard estetik vs kerjaan nyata",
+          commentTriggers: "Debat to-do list vs time-blocking, curhat jam tidur freelancer yang kacau",
+          purchaseTriggers: "Demo visual 10 detik: buka browser langsung jalan + bayar lokal QRIS tanpa kartu kredit"
+        }
+      },
+      offerConversionDNA: {
+        mainOffer: "Trajecto Pro Lifetime Pass (Rp 249.000 sekali bayar, akses seumur hidup)",
+        entryOffer: "Trajecto Free Tier: Akses Sprint Harian & Visual Timer langsung tanpa registrasi kartu kredit",
+        priceRange: "Free Tier (Rp 0) s/d Lifetime Pass (Rp 249.000)",
+        riskReversal: "Garansi 14 hari uang kembali 100% tanpa syarat jika merasa tidak lebih produktif",
+        purchasePath: "Buka browser -> Langsung coba 1 sprint -> Klik Simpan Workspace -> Bayar via QRIS otomatis -> Akun aktif seketika"
+      },
+      proofCredibility: {
+        hardProofPoints: [
+          "Digunakan oleh 4.200+ knowledge worker mandiri di Indonesia",
+          "Rata-rata menghemat 1,8 jam waktu kerja per hari",
+          "Rating 4.9/5 dari 320+ ulasan komunitas kreator & engineer"
+        ],
+        caseTransformations: [
+          "Dari lembur tiap malam sampai jam 10 malam menjadi selesai jam 5 sore teratur dalam minggu pertama",
+          "Dari punya 80 task menumpuk di Notion yang bikin stres menjadi cuma 3 prioritas per hari yang selesai 100%"
+        ],
+        customerVoiceRaw: [
+          "Gila sih, pertama kali ngerasa to-do list gue nggak menghakimi gue pas malam hari.",
+          "Zero-setup beneran bukan gimmick, 30 detik langsung fokus kerja."
+        ]
+      },
+      personalityVoice: {
+        spectrum: {
+          formality: 25,
+          playfulness: 65,
+          approach: 80,
+          positioningTier: 60,
+          energy: 70
+        },
+        humanPersona: "Teman kerja pintar yang santai di coffee shop: bicaranya blak-blakan jujur, nggak suka basa-basi teori motivasi kosong, dan selalu fokus ke apa yang nyata bisa diselesaikan hari ini.",
+        voiceDo: [
+          "Gunakan bahasa kasual percakapan cerdas ('lo/gue' atau 'kamu/kami' yang bersahabat)",
+          "Sentil fenomena 'productive procrastination' secara jenaka tapi akurat",
+          "Fokus pada hasil akhir: ketenangan pikiran dan waktu istirahat yang layak"
+        ],
+        voiceDont: [
+          "Jangan gunakan istilah motivasi klise ('kejarlah mimpimu', 'hustle tiada henti')",
+          "Jangan berbicara formal kaku seperti korporat birokratif",
+          "Jangan merendahkan audiens yang sedang merasa kewalahan"
+        ],
+        signatureWords: ["Sprint Harian", "Zero-Setup", "Eksekusi Nyata", "Fokus Santai", "Tutup Laptop Jam 5"],
+        forbiddenWords: ["Hustle harder", "Multitasking super", "Sukses kilat", "Sistem paripurna"]
+      },
+      visualDNA: {
+        palette: {
+          primary: "#0284c7",
+          secondary: "#0f172a",
+          accent: "#f59e0b",
+          background: "#f8fafc"
+        },
+        photographyStyle: [
+          "Visual meja kerja bersih bernuansa minimalis modern (laptop, kopi, buku catatan kecil)",
+          "Tangkapan layar UI clean dengan highlight warna fokus yang kontras",
+          "Pencahayaan natural pagi/sore, hindari foto stok korporat kaku berjabat tangan"
+        ],
+        visualDoNotUse: [
+          "Foto stok orang berjas formal tertawa menghadap kamera",
+          "Desain grafis 3D glossy murahan yang tidak relevan dengan esensi minimalis",
+          "Warna neon mencolok yang melelahkan mata"
+        ]
+      },
+      contentDNA: {
+        pillars: [
+          { name: "Productivity Reality Check", percentage: 35, description: "Membongkar jebakan produktivitas semu & tips realistis" },
+          { name: "Time-Blocking Workflows", percentage: 25, description: "Tutorial visual cara menyusun sprint harian dalam 3 menit" },
+          { name: "Freelancer & Remote Life", percentage: 25, description: "Relatable humor, burnout awareness, dan manajemen klien" },
+          { name: "Feature Spotlight & Proof", percentage: 15, description: "Studi kasus pengguna, demo fitur zero-setup, dan penawaran" }
+        ],
+        contentRatio: {
+          awareness: 35,
+          education: 35,
+          engagement: 15,
+          conversion: 15,
+          loyalty: 0
+        },
+        funnelCTA: {
+          awareness: "Coba refleksikan: hari ini lo beneran kerja atau cuma sibuk ngerapihin to-do list? Simpan postingan ini.",
+          consideration: "Capek terjebak Notion seharian? Cek demo visual zero-setup di link bio.",
+          conversion: "Mulai sprint fokus lo sekarang tanpa kartu kredit di trajecto.web.app.",
+          retention: "Bagikan progres 3 tugas utama lo hari ini di kolom komentar!"
+        }
+      },
+      brandMemory: {
+        alwaysSay: [
+          "Kerja selesai jam 5 sore bukan mimpi, itu hak semua orang yang punya batas.",
+          "Lebih baik 1 tugas penting selesai daripada 20 tugas dicatat tapi dianggurin."
+        ],
+        neverSay: [
+          "Jangan pernah janji 'sukses dalam 24 jam' atau hal tidak realistis.",
+          "Jangan klaim sebagai pengganti seluruh aplikasi kolaborasi tim korporat."
+        ],
+        signatureStories: [
+          "Kisah pendiri yang burnout membuat 100 template Notion sebelum sadar bahwa yang dia butuhkan cuma timer dan 3 kotak prioritas."
+        ],
+        claimsGuardrail: {
+          allowed: [
+            "Bisa digunakan tanpa akun dan tanpa setup awal dalam 10 detik",
+            "Mendukung pembayaran sekali bayar seumur hidup tanpa langganan mengikat"
+          ],
+          forbidden: [
+            "Klaim menyembuhkan ADHD secara medis",
+            "Klaim melipatgandakan penghasilan secara instan"
+          ]
+        }
+      },
+      customDirectives: [
+        "Selalu sertakan hook yang menyentuh 'rasa lelah karena to-do list' di 3 detik pertama",
+        "Hindari pemakaian kata 'hustle' atau 'grind' tanpa henti"
+      ],
+      customBlocks: [
+        {
+          id: "blk-1",
+          title: "Prinsip Zero-Setup",
+          category: "Aturan Wajib AI",
+          content: "Trajecto tidak membutuhkan instalasi database atau template nesting. Saat menulis skrip atau materi promosi, selalu tegaskan bahwa pengguna bisa langsung pakai detik itu juga.",
+          isActive: true
+        },
+        {
+          id: "blk-2",
+          title: "Target Market Freelancer Kreatif",
+          category: "Persona & Audiens",
+          content: "Audiens kami sangat peka terhadap estetika yang fungsional. Mereka membenci UI yang bloated atau lambat.",
+          isActive: true
+        }
+      ],
+      customKnowledge: "Dokumentasi & SOP Singkat:\n- Website: https://trajecto.web.app\n- Dukungan Pelanggan: halo@trajecto.web.app\n- Format pembayaran: QRIS otomatis semua e-wallet (GoPay, OVO, Dana, BCA Mobile, dll).",
+      aiPersonaInstructions: "Bertindaklah sebagai Senior Growth Marketer & Creative Director eksklusif untuk Trajecto. Dalam setiap pembuatan konten, kalender editorial, caption, atau skrip video, patuhi seluruh nilai brand di atas. Selalu utamakan kejujuran yang menenangkan dan hilangkan jargon korporat yang kaku."
+    };
+
+    // --- 14 BRAND BRAIN SECTIONS DEFINITION ---
+    const bbxSecs = [
+      { id: "identity", icon: "🏛️", label: "Identitas & Fondasi", lock: true, keys: ["name", "category", "product", "brandPromise", "mission", "vision", "values", "audience", "usp", "tone", "cta", "color", "website", "instagramHandle", "platformAccounts"] },
+      { id: "positioning", icon: "🧭", label: "Positioning", keys: ["positioning"] },
+      { id: "market", icon: "⚔️", label: "Kompetitor & Pasar", keys: ["competitorContext"] },
+      { id: "audience", icon: "🎯", label: "Audience DNA", keys: ["audienceDNA"] },
+      { id: "offer", icon: "💎", label: "Penawaran & Konversi", keys: ["offerConversionDNA"] },
+      { id: "proof", icon: "🏆", label: "Bukti & Kredibilitas", keys: ["proofCredibility"] },
+      { id: "voice", icon: "🎭", label: "Karakter & Suara", keys: ["personalityVoice"] },
+      { id: "visual", icon: "🎨", label: "Visual DNA", keys: ["visualDNA"] },
+      { id: "content", icon: "📊", label: "Content DNA", keys: ["contentDNA"] },
+      { id: "memory", icon: "🧠", label: "Brand Memory & Guardrails", keys: ["brandMemory"] },
+      { id: "directives", icon: "📜", label: "Aturan Kustom AI", keys: ["customDirectives"] },
+      { id: "blocks", icon: "🧩", label: "Blok Acuan Modular", keys: ["customBlocks"] },
+      { id: "knowledge", icon: "📚", label: "Basis Pengetahuan Bebas", keys: ["customKnowledge"] },
+      { id: "persona", icon: "🤖", label: "Persona AI", keys: ["aiPersonaInstructions"] }
+    ];
+
+    function bbxHas(v) {
+      if (v == null) return false;
+      if (typeof v === "string") return v.trim().length > 0;
+      if (Array.isArray(v)) return v.some(bbxHas);
+      if (typeof v === "object") return Object.values(v).some(bbxHas);
+      return true;
+    }
+
+    function bbxFilled(sec, b) {
+      if (!b) return false;
+      return sec.keys.some(k => bbxHas(b[k]));
+    }
+
+    // --- PROMPT COMPILER ---
+    function compileBrandBrainPrompt(b) {
+      if (!b || !b.name) return "Belum ada data Brand Brain.";
+      const lines = [
+        "=== BRAND BRAIN: SATU SUMBER KEBENARAN STRATEGIS ===",
+        "Nama Brand: " + (b.name || "-"),
+        "Kategori: " + (b.category || "-"),
+        "Produk Utama: " + (b.product || "-"),
+        "Brand Promise: " + (b.brandPromise || "-"),
+        "USP: " + (b.usp || "-"),
+        "Target Audiens Primer: " + (b.audience || (b.audienceDNA && b.audienceDNA.primary) || "-"),
+        "Tone of Voice: " + (b.tone || "-"),
+        "CTA Utama: " + (b.cta || "-"),
+        "Instagram / Platform Utama: " + (b.instagramHandle || "-")
+      ];
+
+      if (b.positioning && b.positioning.statement) {
+        lines.push('Positioning Statement: "' + b.positioning.statement + '"');
+      }
+
+      if (b.competitorContext) {
+        const cc = b.competitorContext;
+        lines.push("\n[KOMPETITOR & PASAR]");
+        if (cc.directCompetitors && cc.directCompetitors.length) lines.push("- Kompetitor Langsung: " + cc.directCompetitors.join(", "));
+        if (cc.indirectCompetitors && cc.indirectCompetitors.length) lines.push("- Kompetitor Tak Langsung: " + cc.indirectCompetitors.join(", "));
+        if (cc.competitorWeakness) lines.push("- Celah Kompetitor: " + cc.competitorWeakness);
+        if (cc.whatWeWillNeverDo && cc.whatWeWillNeverDo.length) lines.push("- Hal yang TIDAK AKAN PERNAH Dilakukan: " + cc.whatWeWillNeverDo.join("; "));
+      }
+
+      if (b.audienceDNA) {
+        const a = b.audienceDNA;
+        lines.push("\n[AUDIENCE DNA]");
+        if (a.demographics) {
+          lines.push("- Demografi: " + [a.demographics.age, a.demographics.gender, a.demographics.location, a.demographics.occupation].filter(Boolean).join(" | "));
+        }
+        if (a.psychographics) {
+          if (a.psychographics.painPoints && a.psychographics.painPoints.length) lines.push("- Pain Points: " + a.psychographics.painPoints.join("; "));
+          if (a.psychographics.desires && a.psychographics.desires.length) lines.push("- Desires: " + a.psychographics.desires.join("; "));
+          if (a.psychographics.fears && a.psychographics.fears.length) lines.push("- Ketakutan/Fears: " + a.psychographics.fears.join("; "));
+          if (a.psychographics.objections && a.psychographics.objections.length) lines.push("- Keberatan/Objections: " + a.psychographics.objections.join("; "));
+        }
+        if (a.contentBehavior) {
+          if (a.contentBehavior.scrollStoppers) lines.push("- Scroll Stoppers: " + a.contentBehavior.scrollStoppers);
+          if (a.contentBehavior.commentTriggers) lines.push("- Pemicu Komentar/Share: " + a.contentBehavior.commentTriggers);
+          if (a.contentBehavior.purchaseTriggers) lines.push("- Pemicu Beli: " + a.contentBehavior.purchaseTriggers);
+        }
+      }
+
+      if (b.offerConversionDNA) {
+        const o = b.offerConversionDNA;
+        lines.push("\n[PENAWARAN & KONVERSI]");
+        if (o.mainOffer) lines.push("- Main Offer: " + o.mainOffer);
+        if (o.entryOffer) lines.push("- Entry Offer: " + o.entryOffer);
+        if (o.priceRange) lines.push("- Range Harga: " + o.priceRange);
+        if (o.riskReversal) lines.push("- Garansi / Risk Reversal: " + o.riskReversal);
+        if (o.purchasePath) lines.push("- Alur Pembelian: " + o.purchasePath);
+      }
+
+      if (b.proofCredibility) {
+        const pr = b.proofCredibility;
+        lines.push("\n[BUKTI & KREDIBILITAS]");
+        if (pr.hardProofPoints && pr.hardProofPoints.length) lines.push("- Data/Fakta Keras: " + pr.hardProofPoints.join("; "));
+        if (pr.caseTransformations && pr.caseTransformations.length) lines.push("- Transformasi: " + pr.caseTransformations.join("; "));
+        if (pr.customerVoiceRaw && pr.customerVoiceRaw.length) lines.push("- Suara Pelanggan: " + pr.customerVoiceRaw.join("; "));
+      }
+
+      if (b.personalityVoice) {
+        const v = b.personalityVoice;
+        lines.push("\n[KARAKTER & VOICE]");
+        if (v.humanPersona) lines.push("- Personifikasi: " + v.humanPersona);
+        if (v.voiceDo && v.voiceDo.length) lines.push("- DO: " + v.voiceDo.join("; "));
+        if (v.voiceDont && v.voiceDont.length) lines.push("- DONT: " + v.voiceDont.join("; "));
+        if (v.signatureWords && v.signatureWords.length) lines.push("- Kata Khas: " + v.signatureWords.join(", "));
+        if (v.forbiddenWords && v.forbiddenWords.length) lines.push("- Kata Dilarang: " + v.forbiddenWords.join(", "));
+      }
+
+      if (b.visualDNA) {
+        const vi = b.visualDNA;
+        lines.push("\n[VISUAL DNA]");
+        if (vi.palette) lines.push("- Palet Warna: Primary " + (vi.palette.primary || "-") + " | Sec " + (vi.palette.secondary || "-") + " | Accent " + (vi.palette.accent || "-") + " | Bg " + (vi.palette.background || "-"));
+        if (vi.photographyStyle && vi.photographyStyle.length) lines.push("- Gaya Visual/Foto: " + vi.photographyStyle.join("; "));
+        if (vi.visualDoNotUse && vi.visualDoNotUse.length) lines.push("- Visual Dilarang: " + vi.visualDoNotUse.join("; "));
+      }
+
+      if (b.contentDNA) {
+        const c = b.contentDNA;
+        lines.push("\n[CONTENT DNA & FUNNEL CTA]");
+        if (c.pillars && c.pillars.length) {
+          lines.push("- Pilar Konten: " + c.pillars.map(p => p.name + " (" + (p.percentage || 0) + "%)").join(", "));
+        }
+        if (c.funnelCTA) {
+          if (c.funnelCTA.awareness) lines.push('- CTA TOFU (Awareness): "' + c.funnelCTA.awareness + '"');
+          if (c.funnelCTA.consideration) lines.push('- CTA MOFU (Consideration): "' + c.funnelCTA.consideration + '"');
+          if (c.funnelCTA.conversion) lines.push('- CTA BOFU (Conversion): "' + c.funnelCTA.conversion + '"');
+          if (c.funnelCTA.retention) lines.push('- CTA Retention: "' + c.funnelCTA.retention + '"');
+        }
+      }
+
+      if (b.brandMemory) {
+        const m = b.brandMemory;
+        lines.push("\n[BRAND MEMORY & GUARDRAILS]");
+        if (m.alwaysSay && m.alwaysSay.length) lines.push("- Selalu Katakan: " + m.alwaysSay.join("; "));
+        if (m.neverSay && m.neverSay.length) lines.push("- JANGAN PERNAH Katakan: " + m.neverSay.join("; "));
+        if (m.claimsGuardrail) {
+          if (m.claimsGuardrail.allowed && m.claimsGuardrail.allowed.length) lines.push("- Klaim Boleh: " + m.claimsGuardrail.allowed.join("; "));
+          if (m.claimsGuardrail.forbidden && m.claimsGuardrail.forbidden.length) lines.push("- Klaim DILARANG: " + m.claimsGuardrail.forbidden.join("; "));
+        }
+      }
+
+      if (b.customDirectives && b.customDirectives.length) {
+        lines.push("\n[ATURAN KHUSUS]");
+        b.customDirectives.forEach(d => lines.push("- " + d));
+      }
+
+      if (b.customBlocks && b.customBlocks.length) {
+        const activeBlocks = b.customBlocks.filter(blk => blk.isActive);
+        if (activeBlocks.length) {
+          lines.push("\n[BLOK ACUAN MODULAR]");
+          activeBlocks.forEach(blk => {
+            lines.push("### [" + (blk.category || "Umum") + "] " + blk.title + "\n" + blk.content);
+          });
+        }
+      }
+
+      if (b.customKnowledge && b.customKnowledge.trim()) {
+        lines.push("\n[BASIS PENGETAHUAN BEBAS]\n" + b.customKnowledge.trim());
+      }
+
+      if (b.aiPersonaInstructions && b.aiPersonaInstructions.trim()) {
+        lines.push("\n[INSTRUKSI PERSONA AI]\n" + b.aiPersonaInstructions.trim());
+      }
+
+      lines.push("=== AKHIR BRAND BRAIN ===");
+      return lines.join("\n");
+    }
+
+    function calculateBrainCompleteness(b) {
+      if (!b) return { score: 0, filledCount: 0, totalCount: bbxSecs.length };
+      const filledCount = bbxSecs.filter(s => bbxFilled(s, b)).length;
+      const score = Math.round((filledCount / bbxSecs.length) * 100);
+      return { score, filledCount, totalCount: bbxSecs.length };
+    }
+
+    // --- CONNECTOR EXPORT BUILDER ---
+    function exportConnectorJson(b) {
+      const a = b.audienceDNA || {};
+      const ad = a.demographics || {};
+      const ap = a.psychographics || {};
+      const cb = a.contentBehavior || {};
+      const o = b.offerConversionDNA || {};
+      const pr = b.proofCredibility || {};
+      const pv = b.personalityVoice || {};
+      const vi = b.visualDNA || {};
+      const pal = vi.palette || {};
+      const c = b.contentDNA || {};
+      const m = b.brandMemory || {};
+      const cg = m.claimsGuardrail || {};
+      const p = b.platformAccounts || {};
+
+      return {
+        schema: "brand-brain-connector",
+        schema_version: "1.0",
+        exported_at: new Date().toISOString(),
+        exported_by: "Brand Brain Studio Standalone",
+        brand: {
+          name: b.name || "",
+          category: b.category || "",
+          product: b.product || "",
+          promise: b.brandPromise || "",
+          mission: b.mission || "",
+          vision: b.vision || "",
+          values: Array.isArray(b.values) ? b.values : [],
+          primary_color: b.color || pal.primary || "#205c49",
+          website: b.website || "",
+          cta_default: b.cta || "",
+          platforms: {
+            instagram: p.instagram || b.instagramHandle || "",
+            tiktok: p.tiktok || "",
+            threads: p.threads || "",
+            linkedin: p.linkedin || "",
+            youtube: p.youtube || "",
+            facebook: p.facebook || ""
+          }
+        },
+        positioning: {
+          we_are: (b.positioning && b.positioning.weAre) || "",
+          for_audience: (b.positioning && b.positioning.forAudience) || "",
+          who_need: (b.positioning && b.positioning.whoNeed) || "",
+          because_why: (b.positioning && b.positioning.becauseWhy) || "",
+          unlike: (b.positioning && b.positioning.unlike) || "",
+          statement: (b.positioning && b.positioning.statement) || ""
+        },
+        audience_profile: {
+          primary: a.primary || b.audience || "",
+          summary: b.audience || a.primary || "",
+          demographics: {
+            age: ad.age || "",
+            gender: ad.gender || "",
+            location: ad.location || "",
+            occupation: ad.occupation || "",
+            lifestyle: ad.lifestyle || "",
+            purchasing_power: ad.purchasingPower || ""
+          }
+        },
+        competition: {
+          direct: (b.competitorContext && b.competitorContext.directCompetitors) || [],
+          indirect: (b.competitorContext && b.competitorContext.indirectCompetitors) || [],
+          weakness_we_exploit: (b.competitorContext && b.competitorContext.competitorWeakness) || "",
+          what_we_never_do: (b.competitorContext && b.competitorContext.whatWeWillNeverDo) || []
+        },
+        voice: {
+          tone: b.tone || "",
+          human_persona: pv.humanPersona || "",
+          spectrum: pv.spectrum || { formality: 50, playfulness: 50, approach: 50, positioningTier: 50, energy: 50 },
+          do: pv.voiceDo || [],
+          dont: pv.voiceDont || [],
+          signature_words: pv.signatureWords || [],
+          forbidden_words: pv.forbiddenWords || []
+        },
+        visual: {
+          palette: {
+            primary: pal.primary || b.color || "#205c49",
+            secondary: pal.secondary || "",
+            accent: pal.accent || "",
+            background: pal.background || ""
+          },
+          photography_style: vi.photographyStyle || [],
+          do_not_use: vi.visualDoNotUse || []
+        },
+        guardrails: {
+          always_say: m.alwaysSay || [],
+          never_say: m.neverSay || [],
+          claims_allowed: cg.allowed || [],
+          claims_forbidden: cg.forbidden || [],
+          custom_directives: b.customDirectives || []
+        },
+        content_strategy: {
+          pillars: (c.pillars || []).map(pil => ({
+            name: pil.name || "",
+            percentage: pil.percentage || 0,
+            description: pil.description || ""
+          })),
+          ratio: c.contentRatio || { awareness: 35, education: 35, engagement: 15, conversion: 15, loyalty: 0 },
+          funnel_cta: {
+            awareness: (c.funnelCTA && c.funnelCTA.awareness) || "",
+            consideration: (c.funnelCTA && c.funnelCTA.consideration) || "",
+            conversion: (c.funnelCTA && c.funnelCTA.conversion) || "",
+            retention: (c.funnelCTA && c.funnelCTA.retention) || ""
+          }
+        },
+        funnel: {
+          stages: [
+            {
+              id: "awareness",
+              label: "Awareness (TOFU)",
+              objective: "Menjangkau audiens baru dan menghentikan scroll",
+              source_material: {
+                pain_points: ap.painPoints || [],
+                fears: ap.fears || [],
+                scroll_stoppers: cb.scrollStoppers || "",
+                comment_triggers: cb.commentTriggers || "",
+                cta: (c.funnelCTA && c.funnelCTA.awareness) || ""
+              }
+            },
+            {
+              id: "consideration",
+              label: "Consideration (MOFU)",
+              objective: "Membangun kepercayaan mendalam dan membuktikan solusi",
+              source_material: {
+                desires: ap.desires || [],
+                usp: b.usp || "",
+                proof_points: pr.hardProofPoints || [],
+                transformations: pr.caseTransformations || [],
+                cta: (c.funnelCTA && c.funnelCTA.consideration) || ""
+              }
+            },
+            {
+              id: "conversion",
+              label: "Conversion (BOFU)",
+              objective: "Mendorong tindakan pembelian dan membalikkan keraguan",
+              source_material: {
+                main_offer: o.mainOffer || "",
+                entry_offer: o.entryOffer || "",
+                price_range: o.priceRange || "",
+                risk_reversal: o.riskReversal || "",
+                objections: ap.objections || [],
+                purchase_triggers: cb.purchaseTriggers || "",
+                cta: (c.funnelCTA && c.funnelCTA.conversion) || b.cta || ""
+              }
+            },
+            {
+              id: "retention",
+              label: "Retention & Loyalty",
+              objective: "Menjaga hubungan jangka panjang dan advokasi",
+              source_material: {
+                customer_quotes: pr.customerVoiceRaw || [],
+                stories: m.signatureStories || [],
+                cta: (c.funnelCTA && c.funnelCTA.retention) || ""
+              }
+            }
+          ]
+        },
+        knowledge: {
+          custom_blocks: (b.customBlocks || []).map(blk => ({
+            id: blk.id,
+            category: blk.category,
+            title: blk.title,
+            content: blk.content,
+            is_active: blk.isActive
+          })),
+          freeform_knowledge: b.customKnowledge || "",
+          ai_persona: b.aiPersonaInstructions || ""
+        }
+      };
+    }
+
+    // --- UNIVERSAL IMPORTER ---
+    function parseUniversalImport(rawText, fileName = "") {
+      const text = rawText.trim();
+      const isJson = fileName.toLowerCase().endsWith(".json") || text.startsWith("{");
+
+      if (isJson) {
+        let parsed;
+        try {
+          parsed = JSON.parse(text);
+        } catch (err) {
+          throw new Error("Format JSON tidak valid: " + err.message);
+        }
+
+        // 1. Funnel Connector
+        if (parsed.schema === "brand-brain-connector" || parsed.funnel) {
+          return { type: "connector", brand: bbiFromConnector(parsed), raw: parsed };
+        }
+        // 2. Backup JSON
+        if (parsed.type === "brand-brain-export" && parsed.brand) {
+          return { type: "backup", brand: parsed.brand, raw: parsed };
+        }
+        // 3. Generic Brand Object
+        const obj = parsed.brand || parsed.data || parsed.dna || parsed;
+        return { type: "generic", brand: obj, raw: parsed };
+      } else {
+        // Markdown parsing
+        return { type: "markdown", brand: parseMarkdownToBrand(text), raw: text };
+      }
+    }
+
+    function bbiFromConnector(d) {
+      const b = d.brand || {};
+      const po = d.positioning || {};
+      const ap = d.audience_profile || {};
+      const dm = ap.demographics || {};
+      const cp = d.competition || {};
+      const v = d.voice || {};
+      const vi = d.visual || {};
+      const gr = d.guardrails || {};
+      const cs = d.content_strategy || {};
+      const kn = d.knowledge || {};
+      const pl = b.platforms || {};
+
+      const stages = (d.funnel && d.funnel.stages) || [];
+      const st = id => stages.find(x => x && x.id === id) || {};
+      const sm = id => st(id).source_material || {};
+      const aw = sm("awareness");
+      const co = sm("consideration");
+      const cv = sm("conversion");
+      const re = sm("retention");
+
+      return {
+        name: b.name || "",
+        category: b.category || "",
+        product: b.product || "",
+        brandPromise: b.promise || "",
+        mission: b.mission || "",
+        vision: b.vision || "",
+        values: Array.isArray(b.values) ? b.values : [],
+        audience: ap.summary || ap.primary || "",
+        tone: v.tone || "",
+        usp: co.usp || "",
+        cta: b.cta_default || "",
+        color: b.primary_color || (vi.palette && vi.palette.primary) || "#205c49",
+        website: b.website || "",
+        instagramHandle: pl.instagram || "",
+        platformAccounts: {
+          instagram: pl.instagram || "",
+          tiktok: pl.tiktok || "",
+          threads: pl.threads || "",
+          linkedin: pl.linkedin || "",
+          youtube: pl.youtube || "",
+          facebook: pl.facebook || ""
+        },
+        positioning: {
+          weAre: po.we_are || "",
+          forAudience: po.for_audience || "",
+          whoNeed: po.who_need || "",
+          becauseWhy: po.because_why || "",
+          unlike: po.unlike || "",
+          statement: po.statement || ""
+        },
+        competitorContext: {
+          directCompetitors: cp.direct || [],
+          indirectCompetitors: cp.indirect || [],
+          competitorWeakness: cp.weakness_we_exploit || "",
+          whatWeWillNeverDo: cp.what_we_never_do || []
+        },
+        audienceDNA: {
+          primary: ap.primary || "",
+          demographics: {
+            age: dm.age || "",
+            gender: dm.gender || "",
+            location: dm.location || "",
+            occupation: dm.occupation || "",
+            lifestyle: dm.lifestyle || "",
+            purchasingPower: dm.purchasing_power || ""
+          },
+          psychographics: {
+            painPoints: aw.pain_points || [],
+            desires: co.desires || [],
+            fears: aw.fears || [],
+            objections: cv.objections || []
+          },
+          contentBehavior: {
+            scrollStoppers: aw.scroll_stoppers || "",
+            commentTriggers: aw.comment_triggers || "",
+            purchaseTriggers: cv.purchase_triggers || ""
+          }
+        },
+        offerConversionDNA: {
+          mainOffer: cv.main_offer || "",
+          entryOffer: cv.entry_offer || "",
+          priceRange: cv.price_range || "",
+          riskReversal: cv.risk_reversal || "",
+          purchasePath: cv.purchase_path || ""
+        },
+        proofCredibility: {
+          hardProofPoints: co.proof_points || [],
+          caseTransformations: co.transformations || [],
+          customerVoiceRaw: re.customer_quotes || []
+        },
+        personalityVoice: {
+          spectrum: v.spectrum || { formality: 50, playfulness: 50, approach: 50, positioningTier: 50, energy: 50 },
+          humanPersona: v.human_persona || "",
+          voiceDo: v.do || [],
+          voiceDont: v.dont || [],
+          signatureWords: v.signature_words || [],
+          forbiddenWords: v.forbidden_words || []
+        },
+        visualDNA: {
+          palette: vi.palette || { primary: "#205c49", secondary: "", accent: "", background: "" },
+          photographyStyle: vi.photography_style || [],
+          visualDoNotUse: vi.do_not_use || []
+        },
+        contentDNA: {
+          pillars: cs.pillars || [],
+          contentRatio: cs.ratio || { awareness: 35, education: 35, engagement: 15, conversion: 15, loyalty: 0 },
+          funnelCTA: cs.funnel_cta || {}
+        },
+        brandMemory: {
+          alwaysSay: gr.always_say || [],
+          neverSay: gr.never_say || [],
+          signatureStories: re.stories || [],
+          claimsGuardrail: {
+            allowed: gr.claims_allowed || [],
+            forbidden: gr.claims_forbidden || []
+          }
+        },
+        customDirectives: gr.custom_directives || [],
+        customBlocks: (kn.custom_blocks || []).map((blk, idx) => ({
+          id: blk.id || "blk-" + (idx + 1),
+          title: blk.title || "Blok Acuan",
+          category: blk.category || "Umum",
+          content: blk.content || "",
+          isActive: blk.is_active !== false
+        })),
+        customKnowledge: kn.freeform_knowledge || "",
+        aiPersonaInstructions: kn.ai_persona || ""
+      };
+    }
+
+    function parseMarkdownToBrand(text) {
+      const b = { ...DEFAULT_TRAJECTO, id: "brand-" + Date.now(), name: "Brand Baru" };
+      const lines = text.split("\n");
+      lines.forEach(line => {
+        const clean = line.replace(/[*_#]/g, "").trim();
+        const m = clean.match(/^([^:=]+)[:=](.+)$/);
+        if (m) {
+          const k = m[1].toLowerCase().trim();
+          const val = m[2].trim();
+          if (k.includes("nama brand") || k === "brand") b.name = val;
+          else if (k.includes("kategori") || k === "category") b.category = val;
+          else if (k.includes("produk") || k === "product") b.product = val;
+          else if (k.includes("promise") || k.includes("janji")) b.brandPromise = val;
+          else if (k.includes("usp") || k.includes("keunggulan")) b.usp = val;
+          else if (k.includes("tone") || k.includes("nada")) b.tone = val;
+          else if (k.includes("cta") || k.includes("ajakan")) b.cta = val;
+          else if (k.includes("warna") || k.includes("color")) b.color = val;
+          else if (k.includes("instagram") || k.includes("ig")) b.instagramHandle = val;
+        }
+      });
+      return b;
+    }
+
+    function applyImportMerge(current, incoming, mode) {
+      if (mode === "replace") {
+        return {
+          ...current,
+          ...incoming,
+          id: current.id,
+          color: incoming.color || current.color || "#205c49",
+          updatedAt: new Date().toISOString()
+        };
+      }
+      // Fill mode (only fill empty fields)
+      const res = { ...current };
+      Object.keys(incoming).forEach(k => {
+        if (!bbxHas(res[k]) && bbxHas(incoming[k])) {
+          res[k] = incoming[k];
+        } else if (typeof res[k] === "object" && typeof incoming[k] === "object" && !Array.isArray(res[k])) {
+          res[k] = { ...res[k] };
+          Object.keys(incoming[k]).forEach(subK => {
+            if (!bbxHas(res[k][subK]) && bbxHas(incoming[k][subK])) {
+              res[k][subK] = incoming[k][subK];
+            }
+          });
+        }
+      });
+      res.updatedAt = new Date().toISOString();
+      return res;
+    }
+
+    // --- GEMINI API CALLER ---
+    async function callGeminiExtract(rawText) {
+      const systemPrompt = "Anda adalah Chief Brand Strategist senior. Tugas Anda adalah menganalisis profil bisnis dan memetakannya ke format BRAND BRAIN JSON terstruktur. Kembalikan HANYA JSON murni tanpa markdown fences. Format: { name, category, product, brandPromise, audience, usp, tone, cta, color, instagramHandle, analysisSummary, positioning: { weAre, forAudience, whoNeed, becauseWhy, unlike, statement }, competitorContext: { directCompetitors, indirectCompetitors, competitorWeakness, whatWeWillNeverDo }, audienceDNA: { primary, demographics: { age, gender, location, occupation, lifestyle }, psychographics: { painPoints, desires, fears, objections }, contentBehavior: { scrollStoppers, commentTriggers, purchaseTriggers } }, offerConversionDNA: { mainOffer, entryOffer, priceRange, riskReversal, purchasePath }, proofCredibility: { hardProofPoints, caseTransformations, customerVoiceRaw }, personalityVoice: { humanPersona, voiceDo, voiceDont, signatureWords, forbiddenWords }, contentDNA: { pillars: [{ name, percentage, description }], funnelCTA: { awareness, consideration, conversion, retention } }, brandMemory: { alwaysSay, neverSay, signatureStories, claimsGuardrail: { allowed, forbidden } } }";
+
+      const userPrompt = "Analisis materi bisnis berikut dan ekstrak menjadi Brand Brain:\n" + rawText;
+      const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
+
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: systemPrompt + "\n\n" + userPrompt }] }],
+          generationConfig: {
+            temperature: 0.3,
+            responseMimeType: "application/json"
+          }
+        })
+      });
+
+      if (!resp.ok) {
+        const errText = await resp.text();
+        throw new Error("Gemini API Error (" + resp.status + "): " + errText);
+      }
+
+      const data = await resp.json();
+      const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!content) throw new Error("Tidak ada balasan dari Gemini AI.");
+
+      const cleanJson = content.replace(/^\s*```json/i, "").replace(/^\s*```/i, "").replace(/```\s*$/i, "").trim();
+      const parsed = JSON.parse(cleanJson);
+      return { brand: parsed, analysisSummary: parsed.analysisSummary || "Brand Brain berhasil diisi oleh AI!" };
+    }
+
+    // --- GEMINI TEXT CALLER (PLAYGROUND) ---
+    async function callGeminiText(systemPrompt, userPrompt) {
+      const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: systemPrompt + "\n\n=== TUGAS ===\n" + userPrompt }] }],
+          generationConfig: { temperature: 0.8 }
+        })
+      });
+      if (!resp.ok) {
+        const errText = await resp.text();
+        throw new Error("Gemini API Error (" + resp.status + "): " + errText);
+      }
+      const data = await resp.json();
+      const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!content) throw new Error("Tidak ada balasan dari Gemini AI.");
+      return content.trim();
+    }
+
+    const PLAYGROUND_TYPES = [
+      { id: "caption", label: "Caption Instagram", task: "Tulis 1 caption Instagram lengkap (hook, isi, CTA, hashtag) untuk brand ini" },
+      { id: "hook", label: "5 Hook Video Pendek", task: "Tulis 5 hook 3 detik pertama untuk video pendek (Reels/TikTok) untuk brand ini" },
+      { id: "ugc", label: "Skrip UGC 30 Detik", task: "Tulis skrip video UGC 30 detik (visual + voice over) untuk brand ini" },
+      { id: "thread", label: "Thread Threads/X", task: "Tulis 1 thread 5 bagian untuk brand ini" },
+      { id: "reply", label: "Balasan Komentar/DM", task: "Tulis 3 contoh balasan untuk keberatan pelanggan 'harganya mahal' atas nama brand ini" }
+    ];
+
+    // --- WIZARD PROFIL BARU ---
+    const WIZ_INDUSTRIES = [
+      { id: "kuliner", icon: "☕", label: "Kuliner & F&B" },
+      { id: "fashion", icon: "👗", label: "Fashion & Retail" },
+      { id: "kecantikan", icon: "✨", label: "Kecantikan & Skincare" },
+      { id: "teknologi", icon: "💻", label: "Teknologi & SaaS" },
+      { id: "jasa", icon: "🚀", label: "Jasa & Agensi B2B" },
+      { id: "kebugaran", icon: "🥗", label: "Kebugaran & Wellness" },
+      { id: "properti", icon: "🏠", label: "Properti & Interior" },
+      { id: "kustom", icon: "✍️", label: "Kustom / Lainnya", sub: "Ketik industri Anda" }
+    ];
+    const WIZ_SCALES = [
+      { id: "mikro", label: "Mikro / Solopreneur", desc: "Owner-operator, tim 1-2 orang, fokus penjualan online" },
+      { id: "umkm", label: "UMKM Berkembang", desc: "Tim 3-15 orang, omset ratusan juta per bulan, mulai ekspansi kanal" },
+      { id: "scaleup", label: "Scale-Up / Nasional", desc: "Tim mapan, multi-cabang/omnichannel, distribusi luas" },
+      { id: "kustom", label: "Kustom Skala", desc: "Tentukan sendiri", icon: "⚙️" }
+    ];
+    const WIZ_PRODUCTS = {
+      kuliner: [
+        ["Kopi Susu Gula Aren & Beans Specialty", "Minuman kopi harian dan biji kopi artisan sangrai lokal", "Pekerja kantoran & mahasiswa"],
+        ["Sambal Kemasan & Lauk Frozen Siap Saji", "Sambal artisan dan lauk siap santap praktis tahan lama", "Keluarga urban yang sibuk"],
+        ["Katering Sehat & Diet Meal Prep", "Paket makan siang/malam terukur kalori dan nutrisi seimbang", "Profesional yang menjaga pola makan"],
+        ["Artisan Bakery & Pastry Premium", "Roti sourdough, croissant, dan hampers kue kering", "Pecinta kuliner premium & penghadiah"],
+        ["Restoran Keluarga & Paket Prasmanan Event", "Tempat makan bersantap keluarga, gathering kantor & pesta", "Keluarga & penyelenggara acara"]
+      ],
+      fashion: [
+        ["Busana Muslim & Modest Wear", "Gamis, hijab, dan setelan harian bahan adem", "Wanita 20-40 tahun yang mencari busana nyaman"],
+        ["Streetwear & Kaos Lokal", "Kaos, hoodie, dan jaket dengan desain komunitas", "Gen Z & milenial urban"],
+        ["Tas, Sepatu & Aksesori", "Produk kulit/imitasi tahan lama untuk harian dan kerja", "Pekerja muda & mahasiswa"],
+        ["Batik & Tenun Modern", "Pakaian etnik kontemporer untuk acara dan kantor", "Profesional & penghadiah"],
+        ["Thrift & Preloved Kurasi", "Pakaian bekas pilihan berkualitas dengan harga ramah", "Pemburu gaya hemat"]
+      ],
+      kecantikan: [
+        ["Serum & Skincare Barrier Repair", "Rangkaian skincare minimalis untuk kulit sensitif", "Wanita 22-35 tahun berkulit sensitif/berjerawat"],
+        ["Body Care & Hair Care Natural", "Sabun, scrub, dan perawatan rambut berbahan botani lokal", "Konsumen sadar bahan alami"],
+        ["Makeup & Tinted Lip Lokal", "Dekoratif ringan dengan shade cocok kulit Asia", "Remaja & pekerja muda"],
+        ["Klinik / Salon Perawatan Wajah", "Layanan facial dan treatment berbasis reservasi", "Wanita urban 25-45 tahun"],
+        ["Parfum & Wewangian Artisan", "Parfum lokal dengan karakter aroma khas", "Pecinta wewangian & penghadiah"]
+      ],
+      teknologi: [
+        ["Aplikasi Produktivitas & Manajemen Tugas", "Tool kerja ringan untuk individu dan tim kecil", "Freelancer & tim startup"],
+        ["SaaS Operasional UMKM (Kasir & Stok)", "Pencatatan penjualan, stok, dan laporan keuangan", "Pemilik toko & UMKM"],
+        ["Platform Edukasi & Kursus Online", "Kelas digital, komunitas belajar, dan sertifikat", "Profesional yang ingin upskilling"],
+        ["Tools AI untuk Kreator Konten", "Generator ide, skrip, dan jadwal konten", "Kreator & pemilik bisnis online"],
+        ["Aplikasi Mobile Konsumen", "Aplikasi gaya hidup atau layanan harian", "Pengguna smartphone umum"]
+      ],
+      jasa: [
+        ["Agensi Digital Marketing & Ads", "Iklan berbayar, SEO, dan manajemen sosial media", "Pemilik bisnis yang butuh pertumbuhan penjualan"],
+        ["Konsultan Bisnis & Strategi", "Pendampingan strategi, operasional, dan pertumbuhan usaha", "Pemilik usaha & manajer"],
+        ["Jasa Desain, Branding & Video", "Identitas visual, konten, dan produksi video", "Brand yang butuh identitas dan konten"],
+        ["Software House & Pengembangan Web", "Pembuatan website, aplikasi, dan sistem kustom", "Perusahaan & startup"],
+        ["Pelatihan Korporat & Rekrutmen", "Training karyawan dan jasa pencarian talenta", "HR & manajemen perusahaan"]
+      ],
+      kebugaran: [
+        ["Gym & Studio Kebugaran Boutique", "Kelas terstruktur dan pelatih pribadi di studio", "Pekerja urban yang ingin rutin berolahraga"],
+        ["Program Diet & Coaching Kesehatan", "Pendampingan pola makan dan gaya hidup sehat", "Orang yang ingin menurunkan berat badan"],
+        ["Yoga, Pilates & Mindfulness", "Kelas gerak dan relaksasi untuk keseimbangan tubuh dan pikiran", "Wanita 25-45 tahun yang rentan stres"],
+        ["Suplemen & Produk Herbal", "Produk pendukung kebugaran dan daya tahan tubuh", "Konsumen sadar kesehatan"],
+        ["Spa & Pijat Relaksasi", "Layanan perawatan tubuh berbasis reservasi", "Profesional yang butuh pemulihan"]
+      ],
+      properti: [
+        ["Jasa Desain Interior & Renovasi", "Perancangan dan pengerjaan ruang rumah atau kantor", "Pemilik rumah & pemilik usaha"],
+        ["Furnitur Custom & Dekorasi", "Furnitur sesuai ukuran dan gaya ruangan", "Keluarga muda & penghuni apartemen"],
+        ["Agen Properti & Developer Perumahan", "Penjualan dan pemasaran hunian", "Pembeli rumah pertama"],
+        ["Kontraktor Bangun Rumah", "Pembangunan rumah dari desain hingga serah terima", "Pemilik lahan"],
+        ["Toko Perlengkapan Rumah & Dekor", "Aksesori, lampu, dan dekor rumah siap beli", "Penghuni baru & pencinta dekor"]
+      ],
+      kustom: []
+    };
+
+    function wizBlank(v) {
+      if (Array.isArray(v)) return [];
+      if (v && typeof v === "object") { const o = {}; Object.keys(v).forEach(k => { o[k] = wizBlank(v[k]); }); return o; }
+      if (typeof v === "string") return "";
+      return v;
+    }
+
+    // --- BRIEF (NEUMORPHISM) & IMPOR FORM ---
+    const BRIEF_LABELS = { weAre:"Kami Adalah", forAudience:"Untuk", whoNeed:"Yang Membutuhkan", becauseWhy:"Karena", unlike:"Berbeda dari", statement:"Pernyataan Positioning", directCompetitors:"Kompetitor Langsung", indirectCompetitors:"Kompetitor Tidak Langsung", competitorWeakness:"Kelemahan Kompetitor", whatWeWillNeverDo:"Yang Tidak Akan Kami Lakukan", primary:"Audiens Utama", demographics:"Demografi", age:"Usia", gender:"Gender", location:"Lokasi", occupation:"Pekerjaan", lifestyle:"Gaya Hidup", psychographics:"Psikografis", painPoints:"Pain Points", desires:"Keinginan", fears:"Ketakutan", objections:"Keberatan", contentBehavior:"Perilaku Konten", scrollStoppers:"Penghenti Scroll", commentTriggers:"Pemicu Komentar", purchaseTriggers:"Pemicu Pembelian", mainOffer:"Penawaran Utama", entryOffer:"Penawaran Awal", priceRange:"Kisaran Harga", riskReversal:"Pembalik Risiko", purchasePath:"Jalur Pembelian", hardProofPoints:"Bukti Keras", caseTransformations:"Studi Transformasi", customerVoiceRaw:"Suara Pelanggan", humanPersona:"Persona Manusia", voiceDo:"Gaya Bicara: Lakukan", voiceDont:"Gaya Bicara: Hindari", signatureWords:"Kata Khas", forbiddenWords:"Kata Terlarang", pillars:"Pilar Konten", funnelCTA:"CTA per Funnel", awareness:"Awareness", consideration:"Consideration", conversion:"Conversion", retention:"Retention", alwaysSay:"Selalu Katakan", neverSay:"Jangan Pernah Katakan", signatureStories:"Cerita Khas", claimsGuardrail:"Guardrail Klaim", allowed:"Boleh", forbidden:"Dilarang", brandPromise:"Janji Brand", category:"Kategori", product:"Produk", mission:"Misi", vision:"Visi", values:"Nilai", audience:"Audiens", usp:"USP", tone:"Tone", cta:"CTA", website:"Website", instagramHandle:"Instagram", name:"Nama", percentage:"Persentase", description:"Deskripsi", customDirectives:"Aturan Kustom AI", customKnowledge:"Basis Pengetahuan" };
+
+    const BRIEF_SECTIONS = [
+      ["Fondasi Brand", ["category", "product", "brandPromise", "mission", "vision", "values", "audience", "usp", "tone", "cta", "website", "instagramHandle"]],
+      ["Positioning", ["positioning"]],
+      ["Kompetitor & Pasar", ["competitorContext"]],
+      ["Audience DNA", ["audienceDNA"]],
+      ["Penawaran & Konversi", ["offerConversionDNA"]],
+      ["Bukti & Kredibilitas", ["proofCredibility"]],
+      ["Karakter & Suara", ["personalityVoice"]],
+      ["Visual DNA", ["visualDNA"]],
+      ["Content DNA", ["contentDNA"]],
+      ["Brand Memory & Guardrails", ["brandMemory"]],
+      ["Aturan & Pengetahuan Kustom", ["customDirectives", "customKnowledge"]]
+    ];
+
+    function briefEsc(v) {
+      return String(v === null || v === undefined ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function briefLabel(k) {
+      if (BRIEF_LABELS[k]) return BRIEF_LABELS[k];
+      const t = String(k).replace(/([A-Z])/g, " $1").replace(/[_-]+/g, " ").trim();
+      return t.charAt(0).toUpperCase() + t.slice(1);
+    }
+
+    function briefRender(v) {
+      if (secIsEmpty(v)) return "";
+      if (Array.isArray(v)) {
+        const items = v.filter(x => !secIsEmpty(x));
+        if (items.every(x => typeof x !== "object")) {
+          const long = items.some(x => String(x).length > 60);
+          if (long) return '<ul class="list">' + items.map(x => "<li>" + briefEsc(x) + "</li>").join("") + "</ul>";
+          return '<div class="pills">' + items.map(x => '<span class="pill">' + briefEsc(x) + "</span>").join("") + "</div>";
+        }
+        return '<div class="grid">' + items.map(x => '<div class="inset">' + briefRender(x) + "</div>").join("") + "</div>";
+      }
+      if (typeof v === "object") {
+        return '<div class="kv">' + Object.keys(v).filter(k => !secIsEmpty(v[k])).map(k =>
+          '<div class="kv-row"><div class="kv-k">' + briefEsc(briefLabel(k)) + '</div><div class="kv-v">' + briefRender(v[k]) + "</div></div>"
+        ).join("") + "</div>";
+      }
+      return '<p class="txt">' + briefEsc(v).replace(/\n/g, "<br>") + "</p>";
+    }
+
+    function buildBriefHtml(brand, form) {
+      const b = brand || {};
+      const f = form || {};
+      const accent = /^#[0-9a-fA-F]{6}$/.test(b.color || "") ? b.color : "#205c49";
+      const date = new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+
+      const inputRows = [
+        ["Industri", f.industry], ["Skala Bisnis", f.scale], ["Produk / Layanan Utama", f.productTitle],
+        ["Deskripsi Produk", f.productDesc], ["Target", f.target], ["Detail Tambahan", f.details]
+      ].filter(r => r[1] && String(r[1]).trim());
+
+      let sections = "";
+      if (inputRows.length) {
+        sections += '<section class="card"><h2>Brief Input</h2><div class="kv">' + inputRows.map(r =>
+          '<div class="kv-row"><div class="kv-k">' + briefEsc(r[0]) + '</div><div class="kv-v"><p class="txt">' + briefEsc(r[1]).replace(/\n/g, "<br>") + "</p></div></div>"
+        ).join("") + "</div></section>";
+      }
+      BRIEF_SECTIONS.forEach(sec => {
+        const keys = sec[1].filter(k => !secIsEmpty(b[k]));
+        if (!keys.length) return;
+        const body = keys.length === 1 && sec[1].length === 1
+          ? briefRender(b[keys[0]])
+          : '<div class="kv">' + keys.map(k => '<div class="kv-row"><div class="kv-k">' + briefEsc(briefLabel(k)) + '</div><div class="kv-v">' + briefRender(b[k]) + "</div></div>").join("") + "</div>";
+        sections += '<section class="card"><h2>' + briefEsc(sec[0]) + "</h2>" + body + "</section>";
+      });
+
+      const css = ":root{--bg:#e0e5ec;--sd:#a3b1c6;--sl:#ffffff;--tx:#3d4468;--mt:#6b7394;--ac:" + accent + "}" +
+        "*{box-sizing:border-box}body{margin:0;padding:32px 16px 48px;background:var(--bg);color:var(--tx);font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.6}" +
+        ".wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:26px}" +
+        ".card{background:var(--bg);border-radius:26px;padding:26px 28px;box-shadow:9px 9px 18px var(--sd),-9px -9px 18px var(--sl)}" +
+        ".hero{display:flex;align-items:center;gap:20px;flex-wrap:wrap}" +
+        ".logo{width:64px;height:64px;border-radius:50%;background:var(--bg);box-shadow:6px 6px 12px var(--sd),-6px -6px 12px var(--sl);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:var(--ac)}" +
+        "h1{margin:0;font-size:26px;letter-spacing:-.3px}.sub{color:var(--mt);font-size:13px;margin-top:2px}" +
+        ".chip{margin-left:auto;padding:8px 16px;border-radius:999px;font-size:12px;font-weight:700;color:var(--ac);box-shadow:inset 4px 4px 8px var(--sd),inset -4px -4px 8px var(--sl)}" +
+        "h2{margin:0 0 16px;font-size:15px;text-transform:uppercase;letter-spacing:1.2px;color:var(--ac)}" +
+        ".kv{display:flex;flex-direction:column;gap:14px}.kv-row{display:grid;grid-template-columns:170px 1fr;gap:14px;align-items:start}" +
+        ".kv-k{font-size:12px;font-weight:700;color:var(--mt);padding-top:3px}.kv-v .kv{gap:10px}" +
+        ".txt{margin:0;font-size:14px}.list{margin:0;padding-left:18px;font-size:14px}.list li{margin:3px 0}" +
+        ".pills{display:flex;flex-wrap:wrap;gap:10px}.pill{padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600;box-shadow:4px 4px 8px var(--sd),-4px -4px 8px var(--sl)}" +
+        ".grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}" +
+        ".inset{border-radius:18px;padding:14px 16px;box-shadow:inset 5px 5px 10px var(--sd),inset -5px -5px 10px var(--sl)}" +
+        ".foot{text-align:center;font-size:11px;color:var(--mt)}" +
+        "@media(max-width:600px){.kv-row{grid-template-columns:1fr;gap:4px}.chip{margin-left:0}}" +
+        "@media print{body{background:#fff}.card{box-shadow:none;border:1px solid #ddd}}";
+
+      const initial = briefEsc((b.name || f.name || "B").trim().charAt(0).toUpperCase());
+      return "<!DOCTYPE html><html lang=\"id\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Brief - " +
+        briefEsc(b.name || f.name || "Brand") + "</title><style>" + css + "</style></head><body><div class=\"wrap\">" +
+        '<header class="card hero"><div class="logo">' + initial + '</div><div><h1>' + briefEsc(b.name || f.name || "Brand") + '</h1><div class="sub">' +
+        briefEsc(b.category || f.industry || "") + (b.category || f.industry ? " &middot; " : "") + "Brand Brief &middot; " + briefEsc(date) + '</div></div><div class="chip">Brand Brain</div></header>' +
+        sections + '<div class="foot">Dibuat dengan Brand Brain Studio</div></div></body></html>';
+    }
+
+    function buildBriefJson(brand, form) {
+      const b = brand || {};
+      const f = form || {};
+      return {
+        schema: "brand-brief",
+        schema_version: "1.0",
+        exported_at: new Date().toISOString(),
+        exported_by: "Brand Brain Studio Standalone",
+        form: {
+          brand_name: f.name || b.name || "",
+          industry: { label: f.industry || "" },
+          scale: { label: f.scale || "" },
+          product: { title: f.productTitle || "", description: f.productDesc || "", target: f.target || "" },
+          details: f.details || ""
+        },
+        brand_summary: {
+          name: b.name || "", category: b.category || "", product: b.product || "", promise: b.brandPromise || "",
+          audience: b.audience || "", usp: b.usp || "", tone: b.tone || "", cta: b.cta || "", color: b.color || ""
+        }
+      };
+    }
+
+    function parseBriefImport(text, fileName) {
+      const out = { name: "", industry: "", scale: "", productTitle: "", productDesc: "", target: "", details: "" };
+      let j = null;
+      try { j = JSON.parse(text); } catch (err) {}
+      if (j && typeof j === "object") {
+        if (j.schema === "brand-brief" && j.form) {
+          const f = j.form;
+          out.name = f.brand_name || "";
+          out.industry = (f.industry && f.industry.label) || "";
+          out.scale = (f.scale && f.scale.label) || "";
+          out.productTitle = (f.product && f.product.title) || "";
+          out.productDesc = (f.product && f.product.description) || "";
+          out.target = (f.product && f.product.target) || "";
+          out.details = f.details || "";
+          return out;
+        }
+        const res = parseUniversalImport(text, fileName);
+        const b = res.brand || {};
+        out.name = b.name || "";
+        out.industry = b.category || "";
+        out.productTitle = b.product || "";
+        out.target = b.audience || "";
+        const lines = [];
+        if (b.brandPromise) lines.push("Janji brand: " + b.brandPromise);
+        if (b.usp) lines.push("USP: " + b.usp);
+        if (b.tone) lines.push("Tone: " + b.tone);
+        out.details = lines.join("\n");
+        return out;
+      }
+      const map = [
+        ["name", /^(nama brand|nama|brand)\s*[:：]\s*(.+)$/i],
+        ["industry", /^(industri|kategori)\s*[:：]\s*(.+)$/i],
+        ["scale", /^(skala bisnis|skala)\s*[:：]\s*(.+)$/i],
+        ["productTitle", /^(produk\/layanan utama|produk utama|produk|layanan)\s*[:：]\s*(.+)$/i],
+        ["target", /^(target pasar awal|target|audiens|audience)\s*[:：]\s*(.+)$/i]
+      ];
+      const rest = [];
+      String(text).split(/\r?\n/).forEach(line => {
+        const t = line.replace(/^[\s>*\-#]+/, "").replace(/\*\*/g, "").trim();
+        let hit = false;
+        for (const pair of map) {
+          const m = t.match(pair[1]);
+          if (m && !out[pair[0]]) { out[pair[0]] = m[2].trim(); hit = true; break; }
+        }
+        if (!hit) rest.push(line);
+      });
+      out.details = rest.join("\n").trim();
+      return out;
+    }
+
+    // --- AI PER BAGIAN ---
+    const SECTION_AI = {
+      foundation: { label: "Fondasi", keys: ["category", "product", "brandPromise", "mission", "vision", "values", "audience", "usp", "tone", "cta", "positioning"] },
+      market: { label: "Kompetitor & Pasar", keys: ["competitorContext"] },
+      audience: { label: "Audience DNA", keys: ["audienceDNA"] },
+      offer: { label: "Penawaran & Bukti", keys: ["offerConversionDNA", "proofCredibility"] },
+      personality: { label: "Karakter & Gaya", keys: ["personalityVoice", "visualDNA"] },
+      content: { label: "Content DNA", keys: ["contentDNA"] },
+      memory: { label: "Brand Memory", keys: ["brandMemory"] }
+    };
+
+    function secIsEmpty(v) {
+      if (v === null || v === undefined) return true;
+      if (typeof v === "string") return !v.trim();
+      if (Array.isArray(v)) return v.length === 0 || v.every(secIsEmpty);
+      if (typeof v === "object") return Object.values(v).every(secIsEmpty);
+      return false;
+    }
+
+    function secBlank(v) {
+      if (Array.isArray(v)) return v.length ? [secBlank(v[0])] : [];
+      if (v && typeof v === "object") { const o = {}; Object.keys(v).forEach(k => { o[k] = secBlank(v[k]); }); return o; }
+      return "";
+    }
+
+    function secMergeFill(cur, ai) {
+      if (secIsEmpty(cur)) return ai === undefined ? cur : ai;
+      if (cur && typeof cur === "object" && !Array.isArray(cur) && ai && typeof ai === "object" && !Array.isArray(ai)) {
+        const out = { ...cur };
+        Object.keys(ai).forEach(k => { out[k] = secMergeFill(cur[k], ai[k]); });
+        return out;
+      }
+      return cur;
+    }
+
+    async function callGeminiSection(brand, keys, mode) {
+      const template = {};
+      keys.forEach(k => {
+        template[k] = secBlank(brand[k] !== undefined && !secIsEmpty(brand[k]) ? brand[k] : (DEFAULT_TRAJECTO[k] !== undefined ? DEFAULT_TRAJECTO[k] : ""));
+      });
+      const modeText = mode === "fill"
+        ? "Lengkapi HANYA field yang masih kosong. Field yang sudah terisi biarkan sama persis."
+        : "Perbaiki dan tulis ulang seluruh field agar lebih tajam, spesifik, konsisten, dan tidak generik.";
+      const systemPrompt = "Anda adalah Chief Brand Strategist senior. Berikut Brand Brain saat ini:\n\n" + compileBrandBrainPrompt(brand) +
+        "\n\nTugas: isi/perbaiki hanya bagian berikut: " + keys.join(", ") + ". " + modeText +
+        " Gunakan bahasa yang sama dengan Brand Brain, selaras dengan bagian lain, dan jangan mengarang fakta (angka, testimoni, klaim) yang tidak ada di data; jika tidak ada dasar, tulis saran yang jelas ditandai sebagai asumsi. Kembalikan HANYA JSON murni tanpa markdown dengan struktur field persis seperti template ini (isi nilainya, jangan salin contoh dari brand lain): " + JSON.stringify(template);
+      const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: systemPrompt }] }],
+          generationConfig: { temperature: 0.5, responseMimeType: "application/json" }
+        })
+      });
+      if (!resp.ok) {
+        const errText = await resp.text();
+        throw new Error("Gemini API Error (" + resp.status + "): " + errText);
+      }
+      const data = await resp.json();
+      const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!content) throw new Error("Tidak ada balasan dari Gemini AI.");
+      const clean = content.replace(/^\s*```json/i, "").replace(/^\s*```/i, "").replace(/```\s*$/i, "").trim();
+      return JSON.parse(clean);
+    }
+
+    // --- BRAND BRAIN AUDITOR ---
+    async function callGeminiAudit(brand) {
+      const systemPrompt = "Anda adalah auditor brand strategy yang kritis dan jujur. Berikut Brand Brain yang akan diaudit:\n\n" + compileBrandBrainPrompt(brand) +
+        "\n\nAudit profil ini. Cari: (1) kontradiksi antar bagian (misal tone vs voiceDont, USP vs positioning, klaim vs guardrail), (2) isi yang terlalu generik atau bisa dipakai brand mana pun, (3) bagian penting yang kosong atau tipis, (4) klaim berisiko tanpa bukti. Jangan memuji berlebihan; hanya laporkan temuan nyata dan spesifik, sebut isi yang bermasalah. Kembalikan HANYA JSON murni: { qualityScore: angka 0-100 untuk kualitas isi (bukan kelengkapan), verdict: ringkasan 2 kalimat, issues: [{ severity: 'tinggi'|'sedang'|'rendah', type: 'kontradiksi'|'generik'|'kosong'|'klaim', tab: salah satu dari 'foundation','market','audience','offer','personality','content','memory','custom', problem: penjelasan masalah spesifik, suggestion: saran perbaikan konkret }] } Maksimal 10 issues, urutkan dari severity tertinggi.";
+      const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: systemPrompt }] }],
+          generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
+        })
+      });
+      if (!resp.ok) {
+        const errText = await resp.text();
+        throw new Error("Gemini API Error (" + resp.status + "): " + errText);
+      }
+      const data = await resp.json();
+      const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!content) throw new Error("Tidak ada balasan dari Gemini AI.");
+      const clean = content.replace(/^\s*```json/i, "").replace(/^\s*```/i, "").replace(/```\s*$/i, "").trim();
+      return JSON.parse(clean);
+    }
+
+    // --- MAIN REACT APP ---
+    function BrandBrainApp() {
+      // LocalStorage Key
+      const PROFILES_KEY = "brand_brain_studio_profiles";
+      const ACTIVE_ID_KEY = "brand_brain_studio_active_id";
+
+      // State
+      const [profiles, setProfiles] = useState(() => {
+        try {
+          const saved = localStorage.getItem(PROFILES_KEY);
+          if (saved) return JSON.parse(saved);
+        } catch(err) {}
+        return [DEFAULT_TRAJECTO];
+      });
+
+      const [activeId, setActiveId] = useState(() => {
+        return localStorage.getItem(ACTIVE_ID_KEY) || DEFAULT_TRAJECTO.id;
+      });
+
+      const activeBrand = useMemo(() => {
+        return profiles.find(p => p.id === activeId) || profiles[0] || DEFAULT_TRAJECTO;
+      }, [profiles, activeId]);
+
+      const [activeTab, setActiveTab] = useState("foundation");
+      const [showAiBox, setShowAiBox] = useState(true);
+      const [rawExtractText, setRawExtractText] = useState("");
+      const [isExtracting, setIsExtracting] = useState(false);
+      const [analysisNote, setAnalysisNote] = useState(null);
+      const [uploadedFileName, setUploadedFileName] = useState(null);
+      const [copiedItem, setCopiedItem] = useState(null);
+      const [showProfilesModal, setShowProfilesModal] = useState(false);
+      const [showNewBrandModal, setShowNewBrandModal] = useState(false);
+      const [notification, setNotification] = useState(null);
+
+      // Riwayat versi
+      const HISTORY_KEY = "brand_brain_studio_history";
+      const [history, setHistory] = useState(() => {
+        try {
+          const saved = localStorage.getItem(HISTORY_KEY);
+          if (saved) return JSON.parse(saved);
+        } catch(err) {}
+        return [];
+      });
+
+      useEffect(() => {
+        try {
+          localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        } catch(err) {}
+      }, [history]);
+
+      const pushSnapshot = (label) => {
+        setHistory(h => {
+          const latest = h.find(x => x.brandId === activeBrand.id);
+          if (latest && JSON.stringify(latest.data) === JSON.stringify(activeBrand)) return h;
+          const entry = {
+            id: Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+            brandId: activeBrand.id,
+            ts: new Date().toISOString(),
+            label,
+            data: activeBrand
+          };
+          const counts = {};
+          return [entry, ...h].filter(x => {
+            counts[x.brandId] = (counts[x.brandId] || 0) + 1;
+            return counts[x.brandId] <= 10;
+          }).slice(0, 40);
+        });
+      };
+
+      const restoreSnapshot = (entry) => {
+        pushSnapshot("Sebelum restore");
+        updateBrand(() => ({ ...entry.data }));
+        notify("Versi \"" + entry.label + "\" berhasil dikembalikan.", "success");
+      };
+
+      // Auditor states
+      const [auditResult, setAuditResult] = useState(null);
+      const [auditLoading, setAuditLoading] = useState(false);
+
+      const handleAudit = async () => {
+        setAuditLoading(true);
+        try {
+          const res = await callGeminiAudit(activeBrand);
+          setAuditResult({ brandId: activeBrand.id, ...res });
+        } catch (err) {
+          notify(err.message || "Gagal menjalankan audit.", "error");
+        } finally {
+          setAuditLoading(false);
+        }
+      };
+
+      // AI per bagian states
+      const [secLoading, setSecLoading] = useState(false);
+      const [secUndo, setSecUndo] = useState(null);
+
+      const handleSectionAI = async (mode) => {
+        const cfg = SECTION_AI[activeTab];
+        if (!cfg) return;
+        setSecLoading(true);
+        try {
+          const ai = await callGeminiSection(activeBrand, cfg.keys, mode);
+          pushSnapshot("Sebelum AI: " + cfg.label + (mode === "fill" ? " (lengkapi)" : " (perbaiki)"));
+          const prev = {};
+          cfg.keys.forEach(k => { prev[k] = activeBrand[k]; });
+          updateBrand(p => {
+            const next = { ...p };
+            cfg.keys.forEach(k => {
+              if (ai[k] === undefined) return;
+              next[k] = mode === "fill" ? secMergeFill(p[k], ai[k]) : ai[k];
+            });
+            return next;
+          });
+          setSecUndo({ brandId: activeBrand.id, tab: activeTab, prev });
+          notify("Bagian " + cfg.label + (mode === "fill" ? " dilengkapi AI." : " diperbaiki AI."), "success");
+        } catch (err) {
+          notify(err.message || "Gagal memproses bagian ini.", "error");
+        } finally {
+          setSecLoading(false);
+        }
+      };
+
+      const handleSectionUndo = () => {
+        if (!secUndo) return;
+        updateBrand(p => ({ ...p, ...secUndo.prev }));
+        setSecUndo(null);
+        notify("Perubahan AI dibatalkan.", "success");
+      };
+
+      // Playground states
+      const [pgType, setPgType] = useState("caption");
+      const [pgTopic, setPgTopic] = useState("");
+      const [pgResult, setPgResult] = useState("");
+      const [pgLoading, setPgLoading] = useState(false);
+
+      const handlePlayground = async () => {
+        const t = PLAYGROUND_TYPES.find(x => x.id === pgType) || PLAYGROUND_TYPES[0];
+        setPgLoading(true);
+        setPgResult("");
+        try {
+          const task = t.task + (pgTopic.trim() ? ". Topik/konteks: " + pgTopic.trim() : ". Pilih topik yang paling relevan dengan brand.") + ". Patuhi seluruh aturan, tone, dan guardrail Brand Brain di atas.";
+          const out = await callGeminiText(compileBrandBrainPrompt(activeBrand), task);
+          setPgResult(out);
+        } catch (err) {
+          notify(err.message || "Gagal menjalankan tes.", "error");
+        } finally {
+          setPgLoading(false);
+        }
+      };
+
+      // Export & Import states
+      const [exportOpen, setExportOpen] = useState(false);
+      const [showHistory, setShowHistory] = useState(false);
+
+      // Save profiles to localStorage
+      useEffect(() => {
+        try {
+          localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+        } catch(err) {}
+      }, [profiles]);
+
+      // Save activeId
+      useEffect(() => {
+        try {
+          localStorage.setItem(ACTIVE_ID_KEY, activeId);
+        } catch(err) {}
+      }, [activeId]);
+
+      const notify = (msg, type = "success") => {
+        setNotification({ msg, type });
+        setTimeout(() => setNotification(null), 3500);
+      };
+
+      const updateBrand = (updater) => {
+        setProfiles(prev => prev.map(p => {
+          if (p.id === activeBrand.id) {
+            const next = typeof updater === "function" ? updater(p) : { ...p, ...updater };
+            return next;
+          }
+          return p;
+        }));
+      };
+
+      const copyToClipboard = (text, label) => {
+        navigator.clipboard.writeText(text).then(() => {
+          setCopiedItem(label);
+          setTimeout(() => setCopiedItem(null), 2000);
+          notify(label + " berhasil disalin ke clipboard!", "success");
+        }).catch(() => {
+          notify("Gagal menyalin teks.", "error");
+        });
+      };
+
+      const downloadFile = (content, filename, mimeType) => {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        notify("File " + filename + " berhasil diunduh!", "success");
+      };
+
+      // Handle Quick Extract
+      const handleExtract = async () => {
+        const gName = wizName.trim();
+        if (!gName) {
+          notify("Nama brand wajib diisi pada panduan di atas.", "info");
+          return;
+        }
+        const gInd = WIZ_INDUSTRIES.find(x => x.id === wizIndustry);
+        const gScl = WIZ_SCALES.find(x => x.id === wizScale);
+        const gPresets = WIZ_PRODUCTS[wizIndustry] || [];
+        const gCustomProd = wizIndustry === "kustom" || wizProduct === -1;
+        const gIndLabel = wizIndustry === "kustom" ? wizIndustryCustom.trim() : gInd.label;
+        const gSclLabel = wizScale === "kustom" ? wizScaleCustom.trim() : gScl.label + " (" + gScl.desc + ")";
+        const gProd = gCustomProd ? null : gPresets[wizProduct];
+        const gProdLabel = gCustomProd ? wizProductCustom.trim() : gProd[0] + " - " + gProd[1];
+        if (!gIndLabel) { notify("Ketik industri Anda pada panduan di atas.", "info"); return; }
+        if (!gSclLabel) { notify("Tentukan skala bisnis Anda pada panduan di atas.", "info"); return; }
+        if (!gProdLabel) { notify("Tuliskan produk atau jasa utama Anda pada panduan di atas.", "info"); return; }
+        const rawGuide = "Nama brand: " + gName + "\nIndustri: " + gIndLabel + "\nSkala bisnis: " + gSclLabel +
+          "\nProduk/layanan utama: " + gProdLabel + (gProd ? "\nTarget pasar awal: " + gProd[2] : "") +
+          (rawExtractText.trim() ? "\n\nDetail tambahan dari pemilik brand:\n" + rawExtractText.trim() : "") +
+          "\n\nSusun Brand Brain lengkap dalam bahasa Indonesia. Gunakan asumsi yang masuk akal untuk pasar Indonesia, dan jangan mengarang testimoni, angka omset, atau penghargaan.";
+        setIsExtracting(true);
+        try {
+          const res = await callGeminiExtract(rawGuide);
+          pushSnapshot("Sebelum ekstrak AI");
+          updateBrand(prev => ({
+            ...prev,
+            ...res.brand,
+            name: gName,
+            category: res.brand.category || gIndLabel,
+            color: res.brand.color || prev.color || "#205c49"
+          }));
+          setAnalysisNote(res.analysisSummary);
+          notify('Brand Brain "' + (res.brand.name || "Brand") + '" berhasil diekstrak!', "success");
+        } catch (err) {
+          notify(err.message || "Gagal mengekstrak profil brand.", "error");
+        } finally {
+          setIsExtracting(false);
+        }
+      };
+
+      // File upload in Quick Start
+      const handleQuickFileUpload = (ev) => {
+        const file = ev.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        const isJson = file.name.toLowerCase().endsWith(".json");
+        reader.onload = e => {
+          const text = e.target.result;
+          if (isJson) {
+            try {
+              const res = parseUniversalImport(text, file.name);
+              pushSnapshot("Sebelum impor file");
+              updateBrand(prev => applyImportMerge(prev, res.brand, "replace"));
+              setUploadedFileName(file.name);
+              notify("File " + file.name + " berhasil diimpor langsung!", "success");
+            } catch(err) {
+              notify(err.message, "error");
+            }
+          } else {
+            setRawExtractText(text);
+            setUploadedFileName(file.name);
+            setShowAiBox(true);
+            notify('File "' + file.name + '" dimuat. Klik \'Ekstrak Brand Brain via AI\' untuk memproses.', "info");
+          }
+        };
+        reader.readAsText(file);
+        ev.target.value = "";
+      };
+
+      // Manage Profiles
+      // Panduan pengisian ekstraksi (industri, skala, produk)
+      const [wizName, setWizName] = useState("");
+      const [wizIndustry, setWizIndustry] = useState("kuliner");
+      const [wizIndustryCustom, setWizIndustryCustom] = useState("");
+      const [wizScale, setWizScale] = useState("umkm");
+      const [wizScaleCustom, setWizScaleCustom] = useState("");
+      const [wizProduct, setWizProduct] = useState(0);
+      const [wizProductCustom, setWizProductCustom] = useState("");
+      const [impOpen, setImpOpen] = useState(false);
+      const [impText, setImpText] = useState("");
+
+      const getFormSnapshot = () => {
+        const used = wizName.trim() !== "";
+        if (!used) {
+          return { name: activeBrand.name || "", industry: activeBrand.category || "", scale: "", productTitle: activeBrand.product || "", productDesc: "", target: activeBrand.audience || "", details: rawExtractText.trim() };
+        }
+        const ind = WIZ_INDUSTRIES.find(x => x.id === wizIndustry);
+        const scl = WIZ_SCALES.find(x => x.id === wizScale);
+        const presets = WIZ_PRODUCTS[wizIndustry] || [];
+        const customProd = wizIndustry === "kustom" || wizProduct === -1;
+        const pr = customProd ? null : presets[wizProduct];
+        return {
+          name: wizName.trim(),
+          industry: wizIndustry === "kustom" ? wizIndustryCustom.trim() : (ind ? ind.label : ""),
+          scale: wizScale === "kustom" ? wizScaleCustom.trim() : (scl ? scl.label : ""),
+          productTitle: customProd ? wizProductCustom.trim() : (pr ? pr[0] : ""),
+          productDesc: pr ? pr[1] : "",
+          target: pr ? pr[2] : "",
+          details: rawExtractText.trim()
+        };
+      };
+
+      const doExport = (fmt) => {
+        const base = "brand-brain-" + (activeBrand.name || "brand").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        setExportOpen(false);
+        if (fmt === "brief-html") {
+          downloadFile(buildBriefHtml(activeBrand, getFormSnapshot()), base + "-brief.html", "text/html");
+        } else if (fmt === "brief-json") {
+          downloadFile(JSON.stringify(buildBriefJson(activeBrand, getFormSnapshot()), null, 2), base + "-brief.json", "application/json");
+        } else if (fmt === "connector") {
+          downloadFile(JSON.stringify(exportConnectorJson(activeBrand), null, 2), base + "-connector.json", "application/json");
+        } else if (fmt === "backup") {
+          downloadFile(JSON.stringify({ type: "brand-brain-export", version: "1.0", exportedAt: new Date().toISOString(), brand: activeBrand }, null, 2), base + "-backup.json", "application/json");
+        } else {
+          const blankConn = exportConnectorJson({});
+          blankConn.readme = "Template kosong skema konektor. Struktur key selalu sama pada file yang berisi data.";
+          downloadFile(JSON.stringify(blankConn, null, 2), "brand-brain-connector-template.json", "application/json");
+        }
+      };
+
+      const applyBriefImport = (d) => {
+        const norm = x => (x || "").toLowerCase().trim();
+        const match = (label, val) => norm(label) === norm(val) || norm(label).includes(norm(val)) || norm(val).includes(norm(label));
+        if (d.name) setWizName(d.name);
+
+        let indId = wizIndustry;
+        if (d.industry) {
+          const hit = WIZ_INDUSTRIES.find(x => x.id !== "kustom" && match(x.label, d.industry));
+          if (hit) { indId = hit.id; setWizIndustry(hit.id); }
+          else { indId = "kustom"; setWizIndustry("kustom"); setWizIndustryCustom(d.industry); }
+        }
+
+        if (d.scale) {
+          const hit = WIZ_SCALES.find(x => x.id !== "kustom" && match(x.label, d.scale));
+          if (hit) setWizScale(hit.id);
+          else { setWizScale("kustom"); setWizScaleCustom(d.scale); }
+        }
+
+        const presets = WIZ_PRODUCTS[indId] || [];
+        if (d.productTitle) {
+          const idx = indId === "kustom" ? -1 : presets.findIndex(pr => match(pr[0], d.productTitle));
+          if (idx >= 0) setWizProduct(idx);
+          else {
+            setWizProduct(-1);
+            setWizProductCustom([d.productTitle, d.productDesc, d.target ? "Target: " + d.target : ""].filter(Boolean).join(". "));
+          }
+        } else if (d.industry) {
+          setWizProduct(indId === "kustom" ? -1 : 0);
+        }
+
+        if (d.details) setRawExtractText(d.details);
+        setShowAiBox(true);
+      };
+
+      const importBriefText = (text, fileName) => {
+        try {
+          applyBriefImport(parseBriefImport(text, fileName));
+          setImpText("");
+          setImpOpen(false);
+          notify("Data diimpor ke form panduan. Periksa isinya, lalu klik Ekstrak.", "success");
+        } catch (err) {
+          notify(err.message || "Gagal mengimpor data.", "error");
+        }
+      };
+
+      const handleBriefImportFile = (ev) => {
+        const file = ev.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = x => importBriefText(x.target.result, file.name);
+        reader.readAsText(file);
+        ev.target.value = "";
+      };
+
+      const createNewBrand = () => {
+        const newB = {
+          ...DEFAULT_TRAJECTO,
+          id: "brand-" + Date.now(),
+          name: "Brand Baru (" + (profiles.length + 1) + ")",
+          category: "",
+          product: "",
+          brandPromise: "",
+          audience: "",
+          usp: "",
+          positioning: { weAre: "", forAudience: "", whoNeed: "", becauseWhy: "", unlike: "", statement: "" }
+        };
+        setProfiles(prev => [...prev, newB]);
+        setActiveId(newB.id);
+        setShowProfilesModal(false);
+        notify('Profil "' + newB.name + '" berhasil dibuat!', "success");
+      };
+
+      const duplicateBrand = (b) => {
+        const dup = {
+          ...JSON.parse(JSON.stringify(b)),
+          id: "brand-" + Date.now(),
+          name: b.name + " (Salinan)"
+        };
+        setProfiles(prev => [...prev, dup]);
+        setActiveId(dup.id);
+        setShowProfilesModal(false);
+        notify('Profil "' + dup.name + '" berhasil diduplikasi!', "success");
+      };
+
+      const deleteBrand = (id) => {
+        if (profiles.length <= 1) {
+          notify("Minimal harus ada satu profil tersimpan.", "error");
+          return;
+        }
+        const b = profiles.find(p => p.id === id);
+        if (confirm('Hapus profil "' + (b ? b.name : id) + '"?')) {
+          const next = profiles.filter(p => p.id !== id);
+          setProfiles(next);
+          if (activeId === id) setActiveId(next[0].id);
+          notify("Profil berhasil dihapus.", "info");
+        }
+      };
+
+      const resetTrajecto = () => {
+        if (confirm("Reset profil aktif ke Trajecto (standar demo)? Perubahan belum diekspor akan ditimpa.")) {
+          updateBrand(() => ({ ...DEFAULT_TRAJECTO, id: activeBrand.id }));
+          notify("Profil berhasil di-reset ke Trajecto!", "success");
+        }
+      };
+
+      const completeness = calculateBrainCompleteness(activeBrand);
+
+      // --- TABS DEFINITION ---
+      const tabs = [
+        { id: "foundation", num: "1", title: "Fondasi", sub: "Positioning" },
+        { id: "market", num: "2", title: "Kompetitor", sub: "Rival & Pasar" },
+        { id: "audience", num: "3", title: "Audience DNA", sub: "Pain & Persona" },
+        { id: "offer", num: "4", title: "Penawaran", sub: "Bukti & Garansi" },
+        { id: "personality", num: "5", title: "Karakter & Gaya", sub: "Voice & Visual" },
+        { id: "content", num: "6", title: "Content DNA", sub: "Pilar & CTA" },
+        { id: "memory", num: "7", title: "Brand Memory", sub: "Guardrails" },
+        { id: "custom", num: "8", title: "Acuan Bebas", sub: "Blok & Aturan" },
+        { id: "inspector", num: "9", title: "AI Inspector", sub: "Live Prompt" }
+      ];
+
+      return e('div', { className: "min-h-screen flex flex-col bg-[#F8F6F1]" },
+        // --- TOP NAVIGATION HEADER ---
+        e('header', { className: "bg-white border-b border-[#EAE6F3] sticky top-0 z-30 shadow-xs" },
+          e('div', { className: "max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4 flex-wrap" },
+            // Logo & Title
+            e('div', { className: "flex items-center gap-3" },
+              e('div', { className: "w-10 h-10 rounded-[14px] bg-[#1B152C] text-white flex items-center justify-center shadow-xs ring-1 ring-black/5" },
+                e(Icon, { name: 'brain', className: "w-5 h-5" })
+              ),
+              e('div', null,
+                e('div', { className: "flex items-center gap-2" },
+                  e('h1', { className: "font-extrabold text-base sm:text-lg text-[#1B152C] font-extrabold tracking-tight" }, "Brand Brain Studio"),
+                  e('span', { className: "text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#F4F1FA] text-[#6C43E3] border border-[#EAE6F3]" }, "Standalone v1.0")
+                ),
+                e('p', { className: "text-xs text-gray-500 hidden sm:block" }, "Satu Sumber Kebenaran Strategis & Acuan AI")
+              )
+            ),
+
+            // Profile Selector & Actions
+            e('div', { className: "flex items-center gap-2.5 flex-wrap" },
+              // Active Profile Pill
+              e('button', {
+                type: "button",
+                onClick: () => setShowProfilesModal(true),
+                className: "px-3 py-1.5 rounded-xl border border-[#EAE6F3] hover:border-[#6C43E3] bg-[#F8F7FC] hover:bg-white text-xs font-semibold text-gray-800 flex items-center gap-2 transition-all cursor-pointer shadow-xs"
+              },
+                e('span', { className: "w-2.5 h-2.5 rounded-full", style: { backgroundColor: activeBrand.color || "#205c49" } }),
+                e('span', { className: "max-w-[140px] truncate" }, activeBrand.name || "Brand"),
+                e('span', { className: "text-gray-400 text-[10px]" }, "▾")
+              ),
+
+              // + Profil Baru (Brand Brain Generator Trigger)
+              e('button', {
+                type: "button",
+                onClick: () => setShowNewBrandModal(true),
+                className: "px-3.5 py-1.5 rounded-xl bg-[#1B152C] hover:bg-[#6C43E3] text-white text-xs font-bold flex items-center gap-1.5 transition-all duration-300 shadow-xs cursor-pointer"
+              },
+                e('span', null, "+"),
+                e('span', null, "Profil Baru")
+              ),
+
+              // Completeness Pill
+              e('div', {
+                className: "px-3 py-1.5 rounded-xl bg-[#F4F1FA] border border-[#EAE6F3] text-[#6C43E3] text-xs font-bold flex items-center gap-1.5 shadow-2xs"
+              },
+                e('span', null, "Skor:"),
+                e('span', { className: "text-[#6C43E3] font-extrabold" }, completeness.score + "%")
+              ),
+
+              // Riwayat Versi
+              e('button', {
+                type: "button",
+                onClick: () => setShowHistory(true),
+                className: "px-2.5 py-1.5 rounded-xl border border-[#EAE6F3] hover:border-gray-400 bg-white text-xs font-medium text-gray-700 flex items-center gap-1.5 transition-all cursor-pointer"
+              }, e('span', null, "🕘"), e('span', { className: "hidden md:inline" }, "Riwayat")),
+
+              // Export Dropdown
+              e('div', { className: "relative" },
+                e('button', {
+                  type: "button",
+                  onClick: () => setExportOpen(!exportOpen),
+                  className: "px-2.5 py-1.5 rounded-xl border border-[#EAE6F3] hover:border-gray-400 bg-white text-xs font-medium text-gray-700 flex items-center gap-1.5 transition-all cursor-pointer"
+                },
+                  e(Icon, { name: 'download', className: "w-3.5 h-3.5" }),
+                  e('span', null, "Export"),
+                  e('span', { className: "text-[9px]" }, "▾")
+                ),
+                exportOpen && e('div', { className: "fixed inset-0 z-40", onClick: () => setExportOpen(false) }),
+                exportOpen && e('div', { className: "absolute right-0 mt-1.5 w-72 z-50 bg-white border border-[#EAE6F3] rounded-xl shadow-xl p-1.5 space-y-0.5" },
+                  [
+                    { id: "brief-html", icon: "🫧", name: "Brief Neumorphism (.html)", desc: "Dokumen brief siap dibagikan atau dicetak" },
+                    { id: "connector", icon: "🔌", name: "Konektor Funnel (.json)", desc: "Format v1.0 untuk app standalone" },
+                    { id: "backup", icon: "🗄️", name: "Backup JSON (.json)", desc: "Data lengkap 100%" }
+                  ].map(fmt => e('button', {
+                    key: fmt.id,
+                    type: "button",
+                    onClick: () => doExport(fmt.id),
+                    className: "w-full text-left px-3 py-2 rounded-lg hover:bg-[#F4F1FA] cursor-pointer transition-colors duration-150"
+                  },
+                    e('div', { className: "text-xs font-bold text-gray-900 flex items-center gap-1.5" }, e('span', null, fmt.icon), e('span', null, fmt.name)),
+                    e('div', { className: "text-[10px] text-gray-500 mt-0.5" }, fmt.desc)
+                  ))
+                )
+              ),
+
+              // Quick Copy Prompt Button
+              e('button', {
+                type: "button",
+                onClick: () => copyToClipboard(compileBrandBrainPrompt(activeBrand), "Prompt AI"),
+                className: "px-3.5 py-1.5 rounded-xl bg-[#1B152C] hover:bg-[#6C43E3] text-white text-xs font-semibold flex items-center gap-1.5 transition-all duration-300 shadow-xs cursor-pointer"
+              },
+                e(Icon, { name: copiedItem === "Prompt AI" ? 'check' : 'copy', className: "w-3.5 h-3.5" }),
+                e('span', null, copiedItem === "Prompt AI" ? "Tersalin!" : "Salin Prompt AI")
+              )
+            )
+          )
+        ),
+
+        // --- TOAST NOTIFICATION ---
+        notification && e('div', {
+          className: "fixed bottom-5 right-5 z-50 px-4 py-2.5 rounded-xl shadow-lg border text-xs font-semibold flex items-center gap-2 transition-all " + (
+            notification.type === 'error' ? 'bg-red-50 text-red-900 border-red-200' :
+            notification.type === 'info' ? 'bg-blue-50 text-blue-900 border-blue-200' :
+            'bg-emerald-50 text-emerald-900 border-emerald-200'
+          )
+        },
+          e(Icon, { name: notification.type === 'error' ? 'trash' : 'check', className: "w-4 h-4 shrink-0" }),
+          e('span', null, notification.msg)
+        ),
+
+        // --- MAIN WORKSPACE AREA ---
+        e('main', { className: "flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-5" },
+
+          // --- 9 TABS MASTER GRID ---
+          e('div', { className: "p-2.5 rounded-[26px] bg-white border border-[#EAE6F3] shadow-[0_2px_12px_rgba(0,0,0,0.02)]" },
+            e('div', { className: "bbx-grid10" },
+              tabs.map(t => {
+                const isActive = activeTab === t.id;
+                return e('button', {
+                  key: t.id,
+                  type: "button",
+                  onClick: () => setActiveTab(t.id),
+                  className: "bbx-tab-btn flex flex-col items-center justify-center p-2.5 rounded-xl text-center " + (isActive ? 'active' : 'text-gray-700')
+                },
+                  e('span', { className: "text-xs font-bold leading-tight" }, t.num + ". " + t.title),
+                  e('span', { className: "text-[10px] " + (isActive ? 'tab-sub' : 'text-gray-400') + " font-medium truncate max-w-full" }, t.sub)
+                );
+              })
+            )
+          ),
+
+          // --- TAB CONTENT CONTAINER ---
+          e('div', { className: "p-6 sm:p-8 rounded-[28px] bg-white border border-[#EAE6F3] shadow-[0_4px_24px_rgba(0,0,0,0.02)] min-h-[500px]" },
+
+            // AI PER BAGIAN BAR
+            SECTION_AI[activeTab] && e('div', { className: "mb-5 p-3 rounded-xl bg-emerald-50/60 border border-emerald-200 flex items-center justify-between gap-2 flex-wrap" },
+              e('span', { className: "text-xs font-bold text-[#14382c]" }, "✨ AI untuk bagian: " + SECTION_AI[activeTab].label),
+              e('div', { className: "flex items-center gap-2 flex-wrap" },
+                secUndo && secUndo.brandId === activeBrand.id && e('button', {
+                  type: "button",
+                  onClick: handleSectionUndo,
+                  className: "px-3 py-1.5 rounded-xl border border-[#EAE6F3] bg-white text-xs font-medium text-gray-700 cursor-pointer"
+                }, "↩ Batalkan"),
+                e('button', {
+                  type: "button",
+                  disabled: secLoading,
+                  onClick: () => handleSectionAI("fill"),
+                  className: "px-3 py-1.5 rounded-xl bg-[#205c49] hover:bg-[#184738] text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                },
+                  e(Icon, { name: secLoading ? 'refresh' : 'sparkles', className: "w-3.5 h-3.5 " + (secLoading ? 'animate-spin' : 'text-amber-300') }),
+                  e('span', null, secLoading ? "Memproses..." : "Lengkapi yang kosong")
+                ),
+                e('button', {
+                  type: "button",
+                  disabled: secLoading,
+                  onClick: () => handleSectionAI("improve"),
+                  className: "px-3 py-1.5 rounded-xl border border-[#205c49] text-[#6C43E3] hover:bg-emerald-50 text-xs font-semibold cursor-pointer disabled:opacity-50"
+                }, "Perbaiki semua")
+              )
+            ),
+
+            // TAB 1: FONDAI & POSITIONING
+            activeTab === "foundation" && e('div', { className: "space-y-6" },
+              e('div', { className: "border-b pb-4 flex items-center justify-between" },
+                e('div', null,
+                  e('h3', { className: "text-base font-bold text-[#1B152C]" }, "1. Identitas & Fondasi Brand"),
+                  e('p', { className: "text-xs text-gray-500" }, "Karakteristik dasar, kontak digital, dan rumus positioning brand.")
+                ),
+                e('button', {
+                  type: "button",
+                  onClick: resetTrajecto,
+                  className: "text-xs text-[#6C43E3] hover:underline cursor-pointer"
+                }, "Muat Ulang Contoh Trajecto")
+              ),
+
+              e('div', { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" },
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Nama Brand *"),
+                  e('input', {
+                    type: "text",
+                    value: activeBrand.name || "",
+                    onChange: ev => updateBrand({ name: ev.target.value }),
+                    placeholder: "cth: Trajecto",
+                    className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs focus:ring-2 focus:ring-[#6C43E3]/20 focus:border-[#6C43E3] outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Kategori Bisnis *"),
+                  e('input', {
+                    type: "text",
+                    value: activeBrand.category || "",
+                    onChange: ev => updateBrand({ category: ev.target.value }),
+                    placeholder: "cth: Aplikasi Produktivitas & Life Planner",
+                    className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs focus:ring-2 focus:ring-[#6C43E3]/20 focus:border-[#6C43E3] outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Warna Utama Brand (HEX)"),
+                  e('div', { className: "flex items-center gap-2" },
+                    e('input', {
+                      type: "color",
+                      value: activeBrand.color || "#205c49",
+                      onChange: ev => updateBrand({ color: ev.target.value }),
+                      className: "w-9 h-9 rounded-xl border p-0 cursor-pointer"
+                    }),
+                    e('input', {
+                      type: "text",
+                      value: activeBrand.color || "#205c49",
+                      onChange: ev => updateBrand({ color: ev.target.value }),
+                      className: "flex-1 px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs font-mono outline-none"
+                    })
+                  )
+                )
+              ),
+
+              e('div', null,
+                e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Produk / Layanan Utama"),
+                e('input', {
+                  type: "text",
+                  value: activeBrand.product || "",
+                  onChange: ev => updateBrand({ product: ev.target.value }),
+                  placeholder: "cth: All-in-One Personal Productivity & Agile Focus Operating System",
+                  className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs focus:ring-2 focus:ring-[#6C43E3]/20 focus:border-[#6C43E3] outline-none"
+                })
+              ),
+
+              e('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4" },
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Brand Promise (Janji Utama)"),
+                  e('textarea', {
+                    rows: 2,
+                    value: activeBrand.brandPromise || "",
+                    onChange: ev => updateBrand({ brandPromise: ev.target.value }),
+                    placeholder: "Janji hasil konkret yang Anda berikan kepada audiens...",
+                    className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Unique Selling Proposition (USP)"),
+                  e('textarea', {
+                    rows: 2,
+                    value: activeBrand.usp || "",
+                    onChange: ev => updateBrand({ usp: ev.target.value }),
+                    placeholder: "Pembeda mutlak yang tidak dimiliki kompetitor...",
+                    className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs outline-none"
+                  })
+                )
+              ),
+
+              // Positioning Framework
+              e('div', { className: "p-5 rounded-[22px] bg-[#F8F7FC] border border-[#EAE6F3] space-y-3" },
+                e('h4', { className: "text-xs font-extrabold text-[#14382c] uppercase tracking-wider" }, "Rumus Positioning Brand"),
+                e('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-3" },
+                  e('input', {
+                    type: "text",
+                    value: (activeBrand.positioning && activeBrand.positioning.weAre) || "",
+                    onChange: ev => updateBrand(prev => ({ ...prev, positioning: { ...prev.positioning, weAre: ev.target.value } })),
+                    placeholder: "We Are (Identitas / Format esensial)",
+                    className: "px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs bg-white outline-none"
+                  }),
+                  e('input', {
+                    type: "text",
+                    value: (activeBrand.positioning && activeBrand.positioning.forAudience) || "",
+                    onChange: ev => updateBrand(prev => ({ ...prev, positioning: { ...prev.positioning, forAudience: ev.target.value } })),
+                    placeholder: "For Audience (Target spesifik)",
+                    className: "px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs bg-white outline-none"
+                  }),
+                  e('input', {
+                    type: "text",
+                    value: (activeBrand.positioning && activeBrand.positioning.whoNeed) || "",
+                    onChange: ev => updateBrand(prev => ({ ...prev, positioning: { ...prev.positioning, whoNeed: ev.target.value } })),
+                    placeholder: "Who Need (Kebutuhan / keresahan utama)",
+                    className: "px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs bg-white outline-none"
+                  }),
+                  e('input', {
+                    type: "text",
+                    value: (activeBrand.positioning && activeBrand.positioning.unlike) || "",
+                    onChange: ev => updateBrand(prev => ({ ...prev, positioning: { ...prev.positioning, unlike: ev.target.value } })),
+                    placeholder: "Unlike (Alternatif / kompetitor yang dihindari)",
+                    className: "px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs bg-white outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-[11px] font-semibold text-gray-600 mb-1" }, "Positioning Statement (1 Kalimat Utuh)"),
+                  e('textarea', {
+                    rows: 2,
+                    value: (activeBrand.positioning && activeBrand.positioning.statement) || "",
+                    onChange: ev => updateBrand(prev => ({ ...prev, positioning: { ...prev.positioning, statement: ev.target.value } })),
+                    placeholder: "Statement positioning lengkap...",
+                    className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs bg-white outline-none font-medium"
+                  })
+                )
+              ),
+
+              // Social Platforms
+              e('div', null,
+                e('h4', { className: "text-xs font-bold text-gray-700 mb-2" }, "Akun Media Sosial & Website"),
+                e('div', { className: "grid grid-cols-2 sm:grid-cols-3 gap-3" },
+                  ['instagram', 'tiktok', 'threads', 'linkedin', 'youtube', 'facebook'].map(plat => {
+                    const accs = activeBrand.platformAccounts || {};
+                    return e('div', { key: plat },
+                      e('label', { className: "block text-[10px] font-bold text-gray-500 uppercase mb-0.5" }, plat),
+                      e('input', {
+                        type: "text",
+                        value: accs[plat] || (plat === 'instagram' ? activeBrand.instagramHandle : "") || "",
+                        onChange: ev => {
+                          const val = ev.target.value;
+                          updateBrand(prev => ({
+                            ...prev,
+                            platformAccounts: { ...(prev.platformAccounts || {}), [plat]: val },
+                            instagramHandle: plat === 'instagram' ? val : prev.instagramHandle
+                          }));
+                        },
+                        placeholder: plat === 'linkedin' ? 'company/name' : '@handle',
+                        className: "w-full px-3 py-1.5 rounded-xl border border-[#EAE6F3] text-xs outline-none"
+                      })
+                    );
+                  })
+                )
+              )
+            ),
+
+            // TAB 2: KOMPETITOR
+            activeTab === "market" && e('div', { className: "space-y-5" },
+              e('div', { className: "border-b pb-4" },
+                e('h3', { className: "text-base font-bold text-[#1B152C]" }, "2. Kompetitor, Rival & Lanskap Pasar"),
+                e('p', { className: "text-xs text-gray-500" }, "Peta persaingan langsung, substitusi, serta batasan tegas hal yang tidak akan kita lakukan.")
+              ),
+              e('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4" },
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Kompetitor Langsung (1 per baris)"),
+                  e('textarea', {
+                    rows: 4,
+                    value: ((activeBrand.competitorContext && activeBrand.competitorContext.directCompetitors) || []).join("\n"),
+                    onChange: ev => {
+                      const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                      updateBrand(prev => ({ ...prev, competitorContext: { ...prev.competitorContext, directCompetitors: arr } }));
+                    },
+                    placeholder: "Sunsama\nAkiflow\nMotion",
+                    className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Kompetitor Tidak Langsung / Substitusi (1 per baris)"),
+                  e('textarea', {
+                    rows: 4,
+                    value: ((activeBrand.competitorContext && activeBrand.competitorContext.indirectCompetitors) || []).join("\n"),
+                    onChange: ev => {
+                      const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                      updateBrand(prev => ({ ...prev, competitorContext: { ...prev.competitorContext, indirectCompetitors: arr } }));
+                    },
+                    placeholder: "Notion\nTodoist\nBuku Agenda Kertas",
+                    className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs outline-none"
+                  })
+                )
+              ),
+              e('div', null,
+                e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Celah / Kelemahan Kompetitor yang Kita Menangkan"),
+                e('textarea', {
+                  rows: 3,
+                  value: (activeBrand.competitorContext && activeBrand.competitorContext.competitorWeakness) || "",
+                  onChange: ev => updateBrand(prev => ({ ...prev, competitorContext: { ...prev.competitorContext, competitorWeakness: ev.target.value } })),
+                  placeholder: "Kenapa solusi kompetitor mengecewakan atau terlalu mahal bagi audiens kita?",
+                  className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs outline-none"
+                })
+              ),
+              e('div', null,
+                e('label', { className: "block text-xs font-bold text-red-700 mb-1" }, "Hal yang TIDAK AKAN PERNAH Kita Lakukan (1 per baris)"),
+                e('textarea', {
+                  rows: 3,
+                  value: ((activeBrand.competitorContext && activeBrand.competitorContext.whatWeWillNeverDo) || []).join("\n"),
+                  onChange: ev => {
+                    const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                    updateBrand(prev => ({ ...prev, competitorContext: { ...prev.competitorContext, whatWeWillNeverDo: arr } }));
+                  },
+                  placeholder: "Menjual template kosong\nMembuat tutorial bertele-tele",
+                  className: "w-full px-3 py-2 rounded-xl border border-red-200 bg-red-50/30 text-xs outline-none"
+                })
+              )
+            ),
+
+            // TAB 3: AUDIENCE DNA
+            activeTab === "audience" && e('div', { className: "space-y-5" },
+              e('div', { className: "border-b pb-4" },
+                e('h3', { className: "text-base font-bold text-[#1B152C]" }, "3. Audience DNA: Pain Points & Persona"),
+                e('p', { className: "text-xs text-gray-500" }, "Demografi nyata, keresahan mendalam, impian, dan pemicu respons audiens.")
+              ),
+              e('div', null,
+                e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Target Audiens Utama (Ringkasan)"),
+                e('input', {
+                  type: "text",
+                  value: (activeBrand.audienceDNA && activeBrand.audienceDNA.primary) || activeBrand.audience || "",
+                  onChange: ev => {
+                    const val = ev.target.value;
+                    updateBrand(prev => ({
+                      ...prev,
+                      audience: val,
+                      audienceDNA: { ...prev.audienceDNA, primary: val }
+                    }));
+                  },
+                  placeholder: "cth: Freelancer, remote worker, dan solopreneur usia 22-35 tahun di Indonesia",
+                  className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs outline-none"
+                })
+              ),
+              e('div', { className: "grid grid-cols-2 sm:grid-cols-3 gap-3 p-5 rounded-[22px] bg-[#F8F7FC] border border-[#EAE6F3]" },
+                ['age', 'gender', 'location', 'occupation', 'lifestyle', 'purchasingPower'].map(k => {
+                  const demo = (activeBrand.audienceDNA && activeBrand.audienceDNA.demographics) || {};
+                  return e('div', { key: k },
+                    e('label', { className: "block text-[10px] font-bold text-gray-500 uppercase mb-0.5" }, k),
+                    e('input', {
+                      type: "text",
+                      value: demo[k] || "",
+                      onChange: ev => {
+                        const val = ev.target.value;
+                        updateBrand(prev => ({
+                          ...prev,
+                          audienceDNA: {
+                            ...prev.audienceDNA,
+                            demographics: { ...(prev.audienceDNA && prev.audienceDNA.demographics), [k]: val }
+                          }
+                        }));
+                      },
+                      className: "w-full px-2.5 py-1.5 rounded-lg border border-[#EAE6F3] text-xs bg-white outline-none"
+                    })
+                  );
+                })
+              ),
+              e('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4" },
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-red-700 mb-1" }, "Pain Points / Keresahan Nyata (1 per baris)"),
+                  e('textarea', {
+                    rows: 4,
+                    value: ((activeBrand.audienceDNA && activeBrand.audienceDNA.psychographics && activeBrand.audienceDNA.psychographics.painPoints) || []).join("\n"),
+                    onChange: ev => {
+                      const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                      updateBrand(prev => ({
+                        ...prev,
+                        audienceDNA: {
+                          ...prev.audienceDNA,
+                          psychographics: { ...(prev.audienceDNA && prev.audienceDNA.psychographics), painPoints: arr }
+                        }
+                      }));
+                    },
+                    placeholder: "To-do list puluhan item yang bikin cemas...",
+                    className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-emerald-700 mb-1" }, "Desires / Impian & Tujuan (1 per baris)"),
+                  e('textarea', {
+                    rows: 4,
+                    value: ((activeBrand.audienceDNA && activeBrand.audienceDNA.psychographics && activeBrand.audienceDNA.psychographics.desires) || []).join("\n"),
+                    onChange: ev => {
+                      const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                      updateBrand(prev => ({
+                        ...prev,
+                        audienceDNA: {
+                          ...prev.audienceDNA,
+                          psychographics: { ...(prev.audienceDNA && prev.audienceDNA.psychographics), desires: arr }
+                        }
+                      }));
+                    },
+                    placeholder: "Bisa tutup laptop jam 5 sore dengan tenang...",
+                    className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs outline-none"
+                  })
+                )
+              ),
+              e('div', { className: "grid grid-cols-1 md:grid-cols-3 gap-3" },
+                e('div', null,
+                  e('label', { className: "block text-[11px] font-bold text-gray-700 mb-1" }, "Scroll Stoppers (Hook Visual)"),
+                  e('textarea', {
+                    rows: 2,
+                    value: (activeBrand.audienceDNA && activeBrand.audienceDNA.contentBehavior && activeBrand.audienceDNA.contentBehavior.scrollStoppers) || "",
+                    onChange: ev => {
+                      const val = ev.target.value;
+                      updateBrand(prev => ({
+                        ...prev,
+                        audienceDNA: {
+                          ...prev.audienceDNA,
+                          contentBehavior: { ...(prev.audienceDNA && prev.audienceDNA.contentBehavior), scrollStoppers: val }
+                        }
+                      }));
+                    },
+                    className: "w-full px-3 py-1.5 rounded-xl border text-xs outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-[11px] font-bold text-gray-700 mb-1" }, "Pemicu Komentar & Diskusi"),
+                  e('textarea', {
+                    rows: 2,
+                    value: (activeBrand.audienceDNA && activeBrand.audienceDNA.contentBehavior && activeBrand.audienceDNA.contentBehavior.commentTriggers) || "",
+                    onChange: ev => {
+                      const val = ev.target.value;
+                      updateBrand(prev => ({
+                        ...prev,
+                        audienceDNA: {
+                          ...prev.audienceDNA,
+                          contentBehavior: { ...(prev.audienceDNA && prev.audienceDNA.contentBehavior), commentTriggers: val }
+                        }
+                      }));
+                    },
+                    className: "w-full px-3 py-1.5 rounded-xl border text-xs outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-[11px] font-bold text-gray-700 mb-1" }, "Pemicu Keputusan Beli"),
+                  e('textarea', {
+                    rows: 2,
+                    value: (activeBrand.audienceDNA && activeBrand.audienceDNA.contentBehavior && activeBrand.audienceDNA.contentBehavior.purchaseTriggers) || "",
+                    onChange: ev => {
+                      const val = ev.target.value;
+                      updateBrand(prev => ({
+                        ...prev,
+                        audienceDNA: {
+                          ...prev.audienceDNA,
+                          contentBehavior: { ...(prev.audienceDNA && prev.audienceDNA.contentBehavior), purchaseTriggers: val }
+                        }
+                      }));
+                    },
+                    className: "w-full px-3 py-1.5 rounded-xl border text-xs outline-none"
+                  })
+                )
+              )
+            ),
+
+            // TAB 4: PENAWARAN & BUKTI
+            activeTab === "offer" && e('div', { className: "space-y-5" },
+              e('div', { className: "border-b pb-4" },
+                e('h3', { className: "text-base font-bold text-[#1B152C]" }, "4. Penawaran & Bukti Kredibilitas"),
+                e('p', { className: "text-xs text-gray-500" }, "Struktur penawaran, garansi pengurang risiko, fakta keras, dan studi kasus.")
+              ),
+              e('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4" },
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Main Offer (Produk Utama & Harga)"),
+                  e('textarea', {
+                    rows: 2,
+                    value: (activeBrand.offerConversionDNA && activeBrand.offerConversionDNA.mainOffer) || "",
+                    onChange: ev => updateBrand(prev => ({ ...prev, offerConversionDNA: { ...prev.offerConversionDNA, mainOffer: ev.target.value } })),
+                    placeholder: "cth: Trajecto Pro Lifetime Pass Rp 249.000",
+                    className: "w-full px-3 py-2 rounded-xl border text-xs outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Entry Offer / Lead Magnet Gratis"),
+                  e('textarea', {
+                    rows: 2,
+                    value: (activeBrand.offerConversionDNA && activeBrand.offerConversionDNA.entryOffer) || "",
+                    onChange: ev => updateBrand(prev => ({ ...prev, offerConversionDNA: { ...prev.offerConversionDNA, entryOffer: ev.target.value } })),
+                    placeholder: "cth: Free Tier Sprint Harian tanpa registrasi kartu kredit",
+                    className: "w-full px-3 py-2 rounded-xl border text-xs outline-none"
+                  })
+                )
+              ),
+              e('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4" },
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Garansi / Risk Reversal"),
+                  e('input', {
+                    type: "text",
+                    value: (activeBrand.offerConversionDNA && activeBrand.offerConversionDNA.riskReversal) || "",
+                    onChange: ev => updateBrand(prev => ({ ...prev, offerConversionDNA: { ...prev.offerConversionDNA, riskReversal: ev.target.value } })),
+                    placeholder: "cth: 14 hari uang kembali 100% tanpa syarat",
+                    className: "w-full px-3 py-2 rounded-xl border text-xs outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Alur Pembelian Ringkas"),
+                  e('input', {
+                    type: "text",
+                    value: (activeBrand.offerConversionDNA && activeBrand.offerConversionDNA.purchasePath) || "",
+                    onChange: ev => updateBrand(prev => ({ ...prev, offerConversionDNA: { ...prev.offerConversionDNA, purchasePath: ev.target.value } })),
+                    placeholder: "Buka link -> Bayar via QRIS otomatis -> Akun aktif seketika",
+                    className: "w-full px-3 py-2 rounded-xl border text-xs outline-none"
+                  })
+                )
+              ),
+              e('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4 p-5 rounded-[22px] bg-[#F8F7FC] border border-[#EAE6F3]" },
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Fakta Keras & Bukti Angka (1 per baris)"),
+                  e('textarea', {
+                    rows: 3,
+                    value: ((activeBrand.proofCredibility && activeBrand.proofCredibility.hardProofPoints) || []).join("\n"),
+                    onChange: ev => {
+                      const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                      updateBrand(prev => ({ ...prev, proofCredibility: { ...prev.proofCredibility, hardProofPoints: arr } }));
+                    },
+                    placeholder: "4.200+ pengguna aktif\nRating 4.9/5",
+                    className: "w-full px-3 py-2 rounded-xl border text-xs bg-white outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Kutipan Suara Asli Pelanggan (1 per baris)"),
+                  e('textarea', {
+                    rows: 3,
+                    value: ((activeBrand.proofCredibility && activeBrand.proofCredibility.customerVoiceRaw) || []).join("\n"),
+                    onChange: ev => {
+                      const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                      updateBrand(prev => ({ ...prev, proofCredibility: { ...prev.proofCredibility, customerVoiceRaw: arr } }));
+                    },
+                    placeholder: '"Zero setup beneran bukan gimmick!"',
+                    className: "w-full px-3 py-2 rounded-xl border text-xs bg-white outline-none"
+                  })
+                )
+              )
+            ),
+
+            // TAB 5: KARAKTER & GAYA (VOICE & VISUAL)
+            activeTab === "personality" && e('div', { className: "space-y-6" },
+              e('div', { className: "border-b pb-4" },
+                e('h3', { className: "text-base font-bold text-[#1B152C]" }, "5. Karakter, Nada Suara & Visual DNA"),
+                e('p', { className: "text-xs text-gray-500" }, "5 slider spektrum suara, personifikasi manusia, kata kunci, dan palet warna visual.")
+              ),
+
+              // 5 Sliders
+              e('div', { className: "p-5 rounded-[22px] bg-[#F8F7FC] border border-[#EAE6F3] space-y-3" },
+                e('h4', { className: "text-xs font-bold text-gray-700 uppercase" }, "Spektrum Gaya Bahasa & Suara"),
+                [
+                  { key: 'formality', left: 'Sangat Santai / Kasual (0)', right: 'Sangat Formal / Baku (100)' },
+                  { key: 'playfulness', left: 'Serius & Fokus (0)', right: 'Humoris & Playful (100)' },
+                  { key: 'approach', left: 'Instruktif / Otoriter (0)', right: 'Edukator Bersahabat (100)' },
+                  { key: 'positioningTier', left: 'Massal & Terjangkau (0)', right: 'Eksklusif & Premium (100)' },
+                  { key: 'energy', left: 'Kalem & Menenangkan (0)', right: 'High Energy & Antusias (100)' }
+                ].map(sl => {
+                  const spec = (activeBrand.personalityVoice && activeBrand.personalityVoice.spectrum) || {};
+                  const val = spec[sl.key] != null ? spec[sl.key] : 50;
+                  return e('div', { key: sl.key, className: "space-y-1" },
+                    e('div', { className: "flex justify-between text-[11px] text-gray-500 font-medium" },
+                      e('span', null, sl.left),
+                      e('span', { className: "font-bold text-[#6C43E3]" }, val + "%"),
+                      e('span', null, sl.right)
+                    ),
+                    e('input', {
+                      type: "range",
+                      min: 0,
+                      max: 100,
+                      value: val,
+                      onChange: ev => {
+                        const nextVal = parseInt(ev.target.value, 10);
+                        updateBrand(prev => ({
+                          ...prev,
+                          personalityVoice: {
+                            ...prev.personalityVoice,
+                            spectrum: { ...(prev.personalityVoice && prev.personalityVoice.spectrum), [sl.key]: nextVal }
+                          }
+                        }));
+                      },
+                      className: "w-full cursor-pointer"
+                    })
+                  );
+                })
+              ),
+
+              e('div', null,
+                e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Personifikasi Manusia Brand (Human Persona)"),
+                e('textarea', {
+                  rows: 2,
+                  value: (activeBrand.personalityVoice && activeBrand.personalityVoice.humanPersona) || "",
+                  onChange: ev => updateBrand(prev => ({ ...prev, personalityVoice: { ...prev.personalityVoice, humanPersona: ev.target.value } })),
+                  placeholder: "Jika brand ini adalah seorang manusia, dia seperti teman pintar di coffee shop...",
+                  className: "w-full px-3 py-2 rounded-xl border text-xs outline-none"
+                })
+              ),
+
+              e('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4" },
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-emerald-700 mb-1" }, "Voice DO (Gaya yang Diwajibkan - 1 per baris)"),
+                  e('textarea', {
+                    rows: 3,
+                    value: ((activeBrand.personalityVoice && activeBrand.personalityVoice.voiceDo) || []).join("\n"),
+                    onChange: ev => {
+                      const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                      updateBrand(prev => ({ ...prev, personalityVoice: { ...prev.personalityVoice, voiceDo: arr } }));
+                    },
+                    className: "w-full px-3 py-2 rounded-xl border text-xs outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-red-700 mb-1" }, "Voice DONT (Gaya yang Dilarang - 1 per baris)"),
+                  e('textarea', {
+                    rows: 3,
+                    value: ((activeBrand.personalityVoice && activeBrand.personalityVoice.voiceDont) || []).join("\n"),
+                    onChange: ev => {
+                      const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                      updateBrand(prev => ({ ...prev, personalityVoice: { ...prev.personalityVoice, voiceDont: arr } }));
+                    },
+                    className: "w-full px-3 py-2 rounded-xl border text-xs outline-none"
+                  })
+                )
+              ),
+
+              // Visual Palette
+              e('div', { className: "p-5 rounded-[22px] bg-[#F8F7FC] border border-[#EAE6F3] space-y-3" },
+                e('h4', { className: "text-xs font-bold text-gray-700 uppercase" }, "Palet Warna Visual DNA"),
+                e('div', { className: "grid grid-cols-2 sm:grid-cols-4 gap-3" },
+                  ['primary', 'secondary', 'accent', 'background'].map(cKey => {
+                    const pal = (activeBrand.visualDNA && activeBrand.visualDNA.palette) || {};
+                    const col = pal[cKey] || (cKey === 'primary' ? activeBrand.color : "#ffffff") || "#205c49";
+                    return e('div', { key: cKey },
+                      e('label', { className: "block text-[10px] font-bold text-gray-500 uppercase mb-1" }, cKey),
+                      e('div', { className: "flex items-center gap-2" },
+                        e('input', {
+                          type: "color",
+                          value: col.startsWith("#") ? col : "#205c49",
+                          onChange: ev => {
+                            const val = ev.target.value;
+                            updateBrand(prev => ({
+                              ...prev,
+                              visualDNA: {
+                                ...prev.visualDNA,
+                                palette: { ...(prev.visualDNA && prev.visualDNA.palette), [cKey]: val }
+                              }
+                            }));
+                          },
+                          className: "w-8 h-8 rounded-lg border p-0 cursor-pointer"
+                        }),
+                        e('input', {
+                          type: "text",
+                          value: col,
+                          onChange: ev => {
+                            const val = ev.target.value;
+                            updateBrand(prev => ({
+                              ...prev,
+                              visualDNA: {
+                                ...prev.visualDNA,
+                                palette: { ...(prev.visualDNA && prev.visualDNA.palette), [cKey]: val }
+                              }
+                            }));
+                          },
+                          className: "w-full px-2 py-1 text-xs font-mono border rounded-lg bg-white"
+                        })
+                      )
+                    );
+                  })
+                )
+              )
+            ),
+
+            // TAB 6: CONTENT DNA
+            activeTab === "content" && e('div', { className: "space-y-5" },
+              e('div', { className: "border-b pb-4" },
+                e('h3', { className: "text-base font-bold text-[#1B152C]" }, "6. Content DNA: Pilar & Funnel CTA"),
+                e('p', { className: "text-xs text-gray-500" }, "Pilar konten terstruktur, rasio editorial, dan formula CTA berdasarkan funnel.")
+              ),
+
+              // Content Pillars list
+              e('div', { className: "space-y-3" },
+                e('div', { className: "flex items-center justify-between" },
+                  e('h4', { className: "text-xs font-bold text-gray-700 uppercase" }, "Pilar Konten Utama"),
+                  e('button', {
+                    type: "button",
+                    onClick: () => {
+                      const newP = { name: "Pilar Baru", percentage: 20, description: "Deskripsi topik..." };
+                      updateBrand(prev => ({
+                        ...prev,
+                        contentDNA: {
+                          ...prev.contentDNA,
+                          pillars: [...((prev.contentDNA && prev.contentDNA.pillars) || []), newP]
+                        }
+                      }));
+                    },
+                    className: "px-3 py-1.5 rounded-xl bg-[#1B152C] hover:bg-[#6C43E3] text-white text-xs font-semibold flex items-center gap-1 transition-all duration-300 cursor-pointer shadow-xs"
+                  },
+                    e(Icon, { name: 'plus', className: "w-3 h-3" }),
+                    e('span', null, "Tambah Pilar")
+                  )
+                ),
+
+                ((activeBrand.contentDNA && activeBrand.contentDNA.pillars) || []).map((pil, idx) => {
+                  return e('div', { key: idx, className: "p-3 rounded-xl border bg-[#F8F7FC] flex items-center gap-3 flex-wrap sm:flex-nowrap" },
+                    e('input', {
+                      type: "text",
+                      value: pil.name || "",
+                      onChange: ev => {
+                        const val = ev.target.value;
+                        updateBrand(prev => {
+                          const nextP = [...((prev.contentDNA && prev.contentDNA.pillars) || [])];
+                          nextP[idx] = { ...nextP[idx], name: val };
+                          return { ...prev, contentDNA: { ...prev.contentDNA, pillars: nextP } };
+                        });
+                      },
+                      placeholder: "Nama Pilar",
+                      className: "px-3 py-1.5 rounded-lg border text-xs font-bold bg-white w-full sm:w-1/3"
+                    }),
+                    e('div', { className: "flex items-center gap-1 w-24 shrink-0" },
+                      e('input', {
+                        type: "number",
+                        value: pil.percentage || 0,
+                        onChange: ev => {
+                          const val = parseInt(ev.target.value, 10) || 0;
+                          updateBrand(prev => {
+                            const nextP = [...((prev.contentDNA && prev.contentDNA.pillars) || [])];
+                            nextP[idx] = { ...nextP[idx], percentage: val };
+                            return { ...prev, contentDNA: { ...prev.contentDNA, pillars: nextP } };
+                          });
+                        },
+                        className: "px-2 py-1.5 rounded-lg border text-xs text-center bg-white w-14 font-bold"
+                      }),
+                      e('span', { className: "text-xs text-gray-500 font-bold" }, "%")
+                    ),
+                    e('input', {
+                      type: "text",
+                      value: pil.description || "",
+                      onChange: ev => {
+                        const val = ev.target.value;
+                        updateBrand(prev => {
+                          const nextP = [...((prev.contentDNA && prev.contentDNA.pillars) || [])];
+                          nextP[idx] = { ...nextP[idx], description: val };
+                          return { ...prev, contentDNA: { ...prev.contentDNA, pillars: nextP } };
+                        });
+                      },
+                      placeholder: "Deskripsi topik & sudut pandang...",
+                      className: "px-3 py-1.5 rounded-lg border text-xs bg-white flex-1"
+                    }),
+                    e('button', {
+                      type: "button",
+                      onClick: () => {
+                        updateBrand(prev => {
+                          const nextP = ((prev.contentDNA && prev.contentDNA.pillars) || []).filter((_, i) => i !== idx);
+                          return { ...prev, contentDNA: { ...prev.contentDNA, pillars: nextP } };
+                        });
+                      },
+                      className: "p-1.5 text-red-500 hover:text-red-700 cursor-pointer"
+                    }, e(Icon, { name: 'trash', className: "w-4 h-4" }))
+                  );
+                })
+              ),
+
+              // Funnel CTA
+              e('div', { className: "p-5 rounded-[22px] bg-[#F8F7FC] border border-[#EAE6F3] space-y-3" },
+                e('h4', { className: "text-xs font-bold text-gray-700 uppercase" }, "Formula Call To Action (Funnel CTA)"),
+                ['awareness', 'consideration', 'conversion', 'retention'].map(stg => {
+                  const fcta = (activeBrand.contentDNA && activeBrand.contentDNA.funnelCTA) || {};
+                  return e('div', { key: stg },
+                    e('label', { className: "block text-[11px] font-bold text-gray-600 uppercase mb-1" }, "CTA " + stg.toUpperCase()),
+                    e('input', {
+                      type: "text",
+                      value: fcta[stg] || "",
+                      onChange: ev => {
+                        const val = ev.target.value;
+                        updateBrand(prev => ({
+                          ...prev,
+                          contentDNA: {
+                            ...prev.contentDNA,
+                            funnelCTA: { ...(prev.contentDNA && prev.contentDNA.funnelCTA), [stg]: val }
+                          }
+                        }));
+                      },
+                      className: "w-full px-3 py-1.5 rounded-xl border text-xs bg-white outline-none"
+                    })
+                  );
+                })
+              )
+            ),
+
+            // TAB 7: BRAND MEMORY
+            activeTab === "memory" && e('div', { className: "space-y-5" },
+              e('div', { className: "border-b pb-4" },
+                e('h3', { className: "text-base font-bold text-[#1B152C]" }, "7. Brand Memory & Guardrails"),
+                e('p', { className: "text-xs text-gray-500" }, "Pesan berulang, batasan klaim hukum/etis, dan cerita khas pendiri.")
+              ),
+              e('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4" },
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-emerald-700 mb-1" }, "Pesan yang SELALU Diulang (1 per baris)"),
+                  e('textarea', {
+                    rows: 3,
+                    value: ((activeBrand.brandMemory && activeBrand.brandMemory.alwaysSay) || []).join("\n"),
+                    onChange: ev => {
+                      const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                      updateBrand(prev => ({ ...prev, brandMemory: { ...prev.brandMemory, alwaysSay: arr } }));
+                    },
+                    className: "w-full px-3 py-2 rounded-xl border text-xs outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-red-700 mb-1" }, "Hal yang DILARANG Dikatakan (1 per baris)"),
+                  e('textarea', {
+                    rows: 3,
+                    value: ((activeBrand.brandMemory && activeBrand.brandMemory.neverSay) || []).join("\n"),
+                    onChange: ev => {
+                      const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                      updateBrand(prev => ({ ...prev, brandMemory: { ...prev.brandMemory, neverSay: arr } }));
+                    },
+                    className: "w-full px-3 py-2 rounded-xl border text-xs outline-none"
+                  })
+                )
+              ),
+              e('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4 p-5 rounded-[22px] bg-[#F8F7FC] border border-[#EAE6F3]" },
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-emerald-800 mb-1" }, "Klaim yang DIBOLEHKAN (1 per baris)"),
+                  e('textarea', {
+                    rows: 3,
+                    value: ((activeBrand.brandMemory && activeBrand.brandMemory.claimsGuardrail && activeBrand.brandMemory.claimsGuardrail.allowed) || []).join("\n"),
+                    onChange: ev => {
+                      const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                      updateBrand(prev => ({
+                        ...prev,
+                        brandMemory: {
+                          ...prev.brandMemory,
+                          claimsGuardrail: { ...(prev.brandMemory && prev.brandMemory.claimsGuardrail), allowed: arr }
+                        }
+                      }));
+                    },
+                    className: "w-full px-3 py-2 rounded-xl border text-xs bg-white outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-red-800 mb-1" }, "Klaim yang DILARANG KERAS (1 per baris)"),
+                  e('textarea', {
+                    rows: 3,
+                    value: ((activeBrand.brandMemory && activeBrand.brandMemory.claimsGuardrail && activeBrand.brandMemory.claimsGuardrail.forbidden) || []).join("\n"),
+                    onChange: ev => {
+                      const arr = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+                      updateBrand(prev => ({
+                        ...prev,
+                        brandMemory: {
+                          ...prev.brandMemory,
+                          claimsGuardrail: { ...(prev.brandMemory && prev.brandMemory.claimsGuardrail), forbidden: arr }
+                        }
+                      }));
+                    },
+                    className: "w-full px-3 py-2 rounded-xl border text-xs bg-white outline-none"
+                  })
+                )
+              )
+            ),
+
+            // TAB 8: ACUAN BEBAS (BLOK & ATURAN)
+            activeTab === "custom" && e('div', { className: "space-y-6" },
+              e('div', { className: "border-b pb-4 flex items-center justify-between" },
+                e('div', null,
+                  e('h3', { className: "text-base font-bold text-[#1B152C]" }, "8. Acuan Bebas: Blok Modular & Aturan AI"),
+                  e('p', { className: "text-xs text-gray-500" }, "Kumpulan blok acuan modular yang bisa diaktifkan/dinonaktifkan secara fleksibel.")
+                ),
+                e('button', {
+                  type: "button",
+                  onClick: () => {
+                    const newB = {
+                      id: "blk-" + Date.now(),
+                      title: "Blok Acuan Baru",
+                      category: "Aturan Wajib AI",
+                      content: "Isi blok instruksi khusus...",
+                      isActive: true
+                    };
+                    updateBrand(prev => ({
+                      ...prev,
+                      customBlocks: [newB, ...(prev.customBlocks || [])]
+                    }));
+                  },
+                  className: "px-3.5 py-1.5 rounded-xl bg-[#1B152C] hover:bg-[#6C43E3] text-white text-xs font-semibold flex items-center gap-1.5 transition-all duration-300 cursor-pointer shadow-xs"
+                },
+                  e(Icon, { name: 'plus', className: "w-3.5 h-3.5" }),
+                  e('span', null, "Tambah Blok")
+                )
+              ),
+
+              // Blocks list
+              e('div', { className: "space-y-3" },
+                (activeBrand.customBlocks || []).map((blk, idx) => {
+                  return e('div', { key: blk.id || idx, className: "p-4 rounded-xl border border-[#EAE6F3] bg-white shadow-xs space-y-2.5" },
+                    e('div', { className: "flex items-center justify-between gap-2" },
+                      e('div', { className: "flex items-center gap-2 flex-1" },
+                        e('input', {
+                          type: "checkbox",
+                          checked: blk.isActive !== false,
+                          onChange: () => {
+                            updateBrand(prev => {
+                              const nextB = [...(prev.customBlocks || [])];
+                              nextB[idx] = { ...nextB[idx], isActive: !nextB[idx].isActive };
+                              return { ...prev, customBlocks: nextB };
+                            });
+                          },
+                          className: "rounded text-[#6C43E3] cursor-pointer"
+                        }),
+                        e('input', {
+                          type: "text",
+                          value: blk.title || "",
+                          onChange: ev => {
+                            const val = ev.target.value;
+                            updateBrand(prev => {
+                              const nextB = [...(prev.customBlocks || [])];
+                              nextB[idx] = { ...nextB[idx], title: val };
+                              return { ...prev, customBlocks: nextB };
+                            });
+                          },
+                          className: "text-xs font-bold text-gray-800 border-b border-transparent hover:border-[#EAE6F3] focus:border-[#205c49] outline-none"
+                        })
+                      ),
+                      e('div', { className: "flex items-center gap-2" },
+                        e('input', {
+                          type: "text",
+                          value: blk.category || "Umum",
+                          onChange: ev => {
+                            const val = ev.target.value;
+                            updateBrand(prev => {
+                              const nextB = [...(prev.customBlocks || [])];
+                              nextB[idx] = { ...nextB[idx], category: val };
+                              return { ...prev, customBlocks: nextB };
+                            });
+                          },
+                          className: "px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-700 border text-center"
+                        }),
+                        e('button', {
+                          type: "button",
+                          onClick: () => {
+                            updateBrand(prev => ({
+                              ...prev,
+                              customBlocks: (prev.customBlocks || []).filter((_, i) => i !== idx)
+                            }));
+                          },
+                          className: "text-red-500 hover:text-red-700 p-1 cursor-pointer"
+                        }, e(Icon, { name: 'trash', className: "w-3.5 h-3.5" }))
+                      )
+                    ),
+                    e('textarea', {
+                      rows: 3,
+                      value: blk.content || "",
+                      onChange: ev => {
+                        const val = ev.target.value;
+                        updateBrand(prev => {
+                          const nextB = [...(prev.customBlocks || [])];
+                          nextB[idx] = { ...nextB[idx], content: val };
+                          return { ...prev, customBlocks: nextB };
+                        });
+                      },
+                      className: "w-full p-2.5 rounded-lg border border-[#EAE6F3] text-xs outline-none bg-[#F8F7FC]/50"
+                    })
+                  );
+                })
+              ),
+
+              // Freeform Knowledge & Persona
+              e('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-4" },
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Basis Pengetahuan Bebas (SOP, FAQ, URL)"),
+                  e('textarea', {
+                    rows: 4,
+                    value: activeBrand.customKnowledge || "",
+                    onChange: ev => updateBrand({ customKnowledge: ev.target.value }),
+                    placeholder: "Tempel SOP, rincian biaya, atau fakta teknis produk di sini...",
+                    className: "w-full px-3 py-2 rounded-xl border text-xs outline-none"
+                  })
+                ),
+                e('div', null,
+                  e('label', { className: "block text-xs font-bold text-gray-700 mb-1" }, "Instruksi Khusus Persona AI"),
+                  e('textarea', {
+                    rows: 4,
+                    value: activeBrand.aiPersonaInstructions || "",
+                    onChange: ev => updateBrand({ aiPersonaInstructions: ev.target.value }),
+                    placeholder: "Peran spesifik AI saat bertindak atas nama brand...",
+                    className: "w-full px-3 py-2 rounded-xl border text-xs outline-none"
+                  })
+                )
+              )
+            ),
+
+            // TAB 9: AI INSPECTOR (LIVE PROMPT)
+            activeTab === "inspector" && e('div', { className: "space-y-5" },
+              e('div', { className: "border-b pb-4 flex items-center justify-between flex-wrap gap-2" },
+                e('div', null,
+                  e('h3', { className: "text-base font-bold text-[#1B152C]" }, "9. AI Inspector & Pratinjau Teks Sistem"),
+                  e('p', { className: "text-xs text-gray-500" }, "Kompilasi lengkap seluruh variabel Brand Brain yang disuntikkan ke AI.")
+                ),
+                e('button', {
+                  type: "button",
+                  onClick: () => copyToClipboard(compileBrandBrainPrompt(activeBrand), "Prompt AI"),
+                  className: "px-4 py-2 rounded-xl bg-[#1B152C] hover:bg-[#6C43E3] text-white text-xs font-bold flex items-center gap-1.5 transition-all duration-300 cursor-pointer shadow-xs"
+                },
+                  e(Icon, { name: copiedItem === "Prompt AI" ? 'check' : 'copy', className: "w-3.5 h-3.5" }),
+                  e('span', null, copiedItem === "Prompt AI" ? "Tersalin!" : "Salin Seluruh Teks Prompt")
+                )
+              ),
+
+              // 14 Sections Status Checklist
+              e('div', { className: "p-5 rounded-[22px] bg-[#F8F7FC] border border-[#EAE6F3] space-y-2.5" },
+                e('div', { className: "flex items-center justify-between" },
+                  e('h4', { className: "text-xs font-bold text-gray-700 uppercase" }, "Status 14 Bagian Brand Brain"),
+                  e('span', { className: "text-xs font-bold text-emerald-800" }, completeness.filledCount + " dari " + completeness.totalCount + " Bagian Terisi (" + completeness.score + "%)")
+                ),
+                e('div', { className: "grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2" },
+                  bbxSecs.map(sec => {
+                    const isF = bbxFilled(sec, activeBrand);
+                    return e('div', {
+                      key: sec.id,
+                      className: "p-2 rounded-lg border text-center text-[10px] font-bold flex flex-col items-center justify-center gap-1 " + (
+                        isF ? 'bg-[#F4F1FA] border-[#EAE6F3] text-[#5B21B6]' : 'bg-white border-[#EAE6F3] text-gray-400'
+                      )
+                    },
+                      e('span', { className: "text-base" }, sec.icon),
+                      e('span', { className: "truncate max-w-full" }, sec.label),
+                      e('span', { className: "text-[9px] px-1.5 py-0.2 rounded " + (isF ? 'bg-[#5B78F6] text-white' : 'bg-gray-100 text-gray-400') },
+                        isF ? "TERISI" : "KOSONG"
+                      )
+                    );
+                  })
+                )
+              ),
+
+              // Code Viewer
+              e('div', { className: "space-y-1.5" },
+                e('label', { className: "block text-xs font-bold text-gray-600" }, "Kompilasi Prompt AI (compileBrandBrainPrompt):"),
+                e('pre', {
+                  className: "w-full p-4 rounded-xl bg-[#1B152C] text-[#C7D2FE] border border-[#23272F] font-mono text-xs overflow-x-auto max-h-[450px] leading-relaxed select-all"
+                }, compileBrandBrainPrompt(activeBrand))
+              ),
+
+              // Auditor
+              e('div', { className: "p-4 rounded-xl border border-amber-200 bg-amber-50/40 space-y-3" },
+                e('div', { className: "flex items-start justify-between gap-3 flex-wrap" },
+                  e('div', null,
+                    e('h4', { className: "text-sm font-bold text-[#14382c]" }, "🔍 Brand Brain Auditor"),
+                    e('p', { className: "text-xs text-gray-500" }, "AI memeriksa kontradiksi, isi yang terlalu generik, bagian tipis, dan klaim berisiko di seluruh profil.")
+                  ),
+                  e('button', {
+                    type: "button",
+                    disabled: auditLoading,
+                    onClick: handleAudit,
+                    className: "px-4 py-2 rounded-xl bg-[#205c49] hover:bg-[#184738] text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  },
+                    e(Icon, { name: auditLoading ? 'refresh' : 'sparkles', className: "w-3.5 h-3.5 " + (auditLoading ? 'animate-spin' : 'text-amber-300') }),
+                    e('span', null, auditLoading ? "Mengaudit..." : (auditResult ? "Audit Ulang" : "Jalankan Audit"))
+                  )
+                ),
+                auditResult && auditResult.brandId === activeBrand.id && e('div', { className: "space-y-3" },
+                  e('div', { className: "p-3 rounded-xl bg-white border border-[#EAE6F3] flex items-start gap-3" },
+                    e('div', { className: "text-center shrink-0" },
+                      e('div', { className: "text-2xl font-extrabold text-[#6C43E3]" }, String(auditResult.qualityScore ?? "-")),
+                      e('div', { className: "text-[10px] text-gray-400 font-bold uppercase" }, "Skor Kualitas")
+                    ),
+                    e('p', { className: "text-xs text-gray-700 leading-relaxed" }, auditResult.verdict || "")
+                  ),
+                  (auditResult.issues || []).length === 0
+                    ? e('p', { className: "text-xs text-emerald-800 font-semibold" }, "Tidak ada temuan.")
+                    : (auditResult.issues || []).map((it, i) => {
+                        const sev = (it.severity || "").toLowerCase();
+                        const sevCls = sev === "tinggi" ? "bg-red-100 text-red-800" : (sev === "sedang" ? "bg-amber-100 text-amber-800" : "bg-gray-100 text-gray-600");
+                        const target = tabs.find(t => t.id === it.tab);
+                        return e('div', { key: i, className: "p-3 rounded-xl bg-white border border-[#EAE6F3] space-y-1.5" },
+                          e('div', { className: "flex items-center gap-2 flex-wrap" },
+                            e('span', { className: "text-[10px] font-bold px-2 py-0.5 rounded uppercase " + sevCls }, it.severity || "info"),
+                            e('span', { className: "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 uppercase" }, it.type || ""),
+                            target && e('button', {
+                              type: "button",
+                              onClick: () => setActiveTab(target.id),
+                              className: "text-[10px] font-bold text-[#6C43E3] underline cursor-pointer"
+                            }, "Buka tab " + target.num + ". " + target.title)
+                          ),
+                          e('p', { className: "text-xs text-gray-800" }, it.problem || ""),
+                          e('p', { className: "text-xs text-emerald-900" }, e('strong', null, "Saran: "), it.suggestion || "")
+                        );
+                      })
+                )
+              ),
+
+              // Playground
+              e('div', { className: "p-4 rounded-xl border border-emerald-200 bg-emerald-50/40 space-y-3" },
+                e('div', null,
+                  e('h4', { className: "text-sm font-bold text-[#14382c]" }, "🧪 Playground: Tes Brand Brain"),
+                  e('p', { className: "text-xs text-gray-500" }, "Hasilkan contoh konten memakai prompt Brand Brain di atas untuk menguji apakah suara dan aturannya sudah tepat.")
+                ),
+                e('div', { className: "grid grid-cols-1 md:grid-cols-3 gap-2" },
+                  e('select', {
+                    value: pgType,
+                    onChange: ev => setPgType(ev.target.value),
+                    className: "px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs bg-white outline-none"
+                  }, PLAYGROUND_TYPES.map(t => e('option', { key: t.id, value: t.id }, t.label))),
+                  e('input', {
+                    type: "text",
+                    value: pgTopic,
+                    onChange: ev => setPgTopic(ev.target.value),
+                    placeholder: "Topik/konteks (opsional)",
+                    className: "md:col-span-2 px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs bg-white outline-none"
+                  })
+                ),
+                e('button', {
+                  type: "button",
+                  disabled: pgLoading,
+                  onClick: handlePlayground,
+                  className: "px-4 py-2 rounded-xl bg-[#205c49] hover:bg-[#184738] text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                },
+                  e(Icon, { name: pgLoading ? 'refresh' : 'sparkles', className: "w-3.5 h-3.5 " + (pgLoading ? 'animate-spin' : 'text-amber-300') }),
+                  e('span', null, pgLoading ? "Menghasilkan..." : (pgResult ? "Hasilkan Ulang" : "Jalankan Tes"))
+                ),
+                pgResult && e('div', { className: "space-y-2" },
+                  e('pre', { className: "w-full p-4 rounded-xl bg-white border border-[#EAE6F3] text-xs text-gray-800 whitespace-pre-wrap leading-relaxed font-sans" }, pgResult),
+                  e('button', {
+                    type: "button",
+                    onClick: () => copyToClipboard(pgResult, "Hasil Tes"),
+                    className: "px-3 py-1.5 rounded-xl border border-[#EAE6F3] bg-white text-xs font-medium text-gray-700 flex items-center gap-1.5 cursor-pointer"
+                  },
+                    e(Icon, { name: copiedItem === "Hasil Tes" ? 'check' : 'copy', className: "w-3.5 h-3.5" }),
+                    e('span', null, copiedItem === "Hasil Tes" ? "Tersalin!" : "Salin Hasil")
+                  )
+                )
+              )
+            ),
+          )
+        ),
+
+        // --- FOOTER ---
+        e('footer', { className: "bg-white border-t border-[#EAE6F3] bg-white py-4 px-6 text-center text-xs text-gray-500 mt-auto" },
+          e('div', { className: "max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2" },
+            e('span', null, "Brand Brain Studio — Standalone Single-File Architecture"),
+            e('span', { className: "font-mono text-[11px]" }, "Skema Global: brand-brain-connector v1.0")
+          )
+        ),
+
+        
+        // --- BRAND BRAIN GENERATOR MODAL (HANYA MUNCUL SAAT + PROFIL BARU) ---
+        showNewBrandModal && e('div', { className: "fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto" },
+          e('div', { className: "bg-white rounded-[28px] max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-[#EAE6F3] overflow-hidden my-auto" },
+            e('div', { className: "p-4 sm:px-6 bg-[#F8F7FC] border-b border-[#EAE6F3] flex items-center justify-between shrink-0" },
+              e('div', { className: "flex items-center gap-2.5" },
+                e('div', { className: "w-8 h-8 rounded-xl bg-[#1B152C] text-white flex items-center justify-center font-bold text-xs" }, "+"),
+                e('div', null,
+                  e('h3', { className: "text-sm font-bold text-[#1B152C]" }, "Generate Profil Brand Baru via AI"),
+                  e('p', { className: "text-xs text-gray-500" }, "Pilih industri dan ketik acuan brand untuk generate profil otomatis")
+                )
+              ),
+              e('button', {
+                type: "button",
+                onClick: () => setShowNewBrandModal(false),
+                className: "p-1.5 text-gray-400 hover:text-gray-700 rounded-lg cursor-pointer"
+              }, "✕")
+            ),
+            e('div', { className: "p-5 sm:p-6 overflow-y-auto space-y-4" },
+              // --- QUICK START AI BAR ---
+          e('div', { className: "p-5 sm:p-6 rounded-[28px] border border-[#EAE6F3] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.02)]" },
+            e('div', { className: "flex items-center justify-between gap-2 flex-wrap" },
+              e('div', { className: "flex items-center gap-2" },
+                e('span', { className: "p-2 rounded-xl bg-[#F4F1FA] text-[#6C43E3]" },
+                  e(Icon, { name: 'sparkles', className: "w-4 h-4" })
+                ),
+                e('div', null,
+                  e('h2', { className: "text-sm font-bold text-[#1B152C]" }, "Isi Cepat dengan AI (Quick Start)"),
+                  e('p', { className: "text-xs text-gray-500" }, "Ketik deskripsi produk, proposal, atau unggah file untuk mengisi semua tab secara otomatis.")
+                )
+              ),
+              e('button', {
+                type: "button",
+                onClick: () => setShowAiBox(!showAiBox),
+                className: "text-xs font-semibold text-[#6C43E3] hover:underline cursor-pointer"
+              }, showAiBox ? "Sembunyikan Kotak AI" : "Buka Kotak AI")
+            ),
+
+            showAiBox && e('div', { className: "mt-3 p-4 rounded-[22px] border border-[#EAE6F3] bg-[#F8F7FC] space-y-4" },
+              e('p', { className: "text-xs font-bold text-[#1B152C]" }, "Panduan pengisian: pilih kartu di bawah agar AI tahu konteks brand Anda"),
+
+              // Impor data ke form
+              e('div', { className: "space-y-2" },
+                e('div', { className: "flex items-center gap-2 flex-wrap" },
+                  e('label', { className: "cursor-pointer px-3 py-1.5 rounded-xl border border-[#EAE6F3] bg-white hover:bg-[#F8F7FC] text-xs font-semibold text-gray-700 inline-flex items-center gap-1.5" },
+                    e(Icon, { name: 'upload', className: "w-3.5 h-3.5" }),
+                    e('span', null, "Impor data ke form (.json / .md / .txt)"),
+                    e('input', { type: "file", accept: ".json,.md,.markdown,.txt", onChange: handleBriefImportFile, className: "hidden" })
+                  ),
+                  e('button', {
+                    type: "button",
+                    onClick: () => setImpOpen(!impOpen),
+                    className: "px-3 py-1.5 rounded-xl border border-[#EAE6F3] bg-white hover:bg-[#F8F7FC] text-xs font-semibold text-gray-700 cursor-pointer"
+                  }, impOpen ? "Tutup Tempel Teks" : "Tempel Teks"),
+                  e('span', { className: "text-[10px] text-gray-400" }, "Format: Brief JSON, Konektor/Backup JSON, atau teks \"Nama brand: ..., Industri: ..., Produk: ...\"")
+                ),
+                impOpen && e('div', { className: "space-y-2" },
+                  e('textarea', {
+                    rows: 4,
+                    value: impText,
+                    onChange: ev => setImpText(ev.target.value),
+                    placeholder: "Tempel JSON atau teks brief di sini...",
+                    className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs font-mono bg-white outline-none"
+                  }),
+                  e('button', {
+                    type: "button",
+                    onClick: () => { if (!impText.trim()) { notify("Tempel teks terlebih dahulu.", "info"); return; } importBriefText(impText, ""); },
+                    className: "px-4 py-1.5 rounded-xl bg-[#1B152C] hover:bg-[#6C43E3] text-white text-xs font-bold transition-all duration-300 cursor-pointer"
+                  }, "Terapkan ke Form")
+                )
+              ),
+              // Nama
+              e('div', { className: "flex items-center gap-3 flex-wrap" },
+                e('div', { className: "flex items-center gap-2 shrink-0" },
+                  e('span', { className: "text-xs font-bold text-gray-800" }, "Nama Brand:"),
+                  e('span', { className: "text-red-500 font-bold" }, "*"),
+                  e('span', { className: "text-[10px] font-bold px-1.5 py-0.5 rounded border border-red-300 bg-red-50 text-red-600" }, "Wajib Diisi")
+                ),
+                e('input', {
+                  type: "text",
+                  value: wizName,
+                  onChange: ev => setWizName(ev.target.value),
+                  placeholder: "Ketik nama brand Anda (contoh: Kopi Nusantara, Aura Glow, TechNova)",
+                  className: "flex-1 min-w-[200px] px-4 py-2 rounded-full border border-[#EAE6F3] text-xs bg-white outline-none focus:ring-2 focus:ring-[#6C43E3]/20 focus:border-[#6C43E3]"
+                })
+              ),
+
+              // 1. Industri
+              e('div', { className: "space-y-2" },
+                e('div', { className: "flex items-center justify-between" },
+                  e('h4', { className: "text-xs font-bold text-gray-800" }, "1. Pilih Industri Brand:"),
+                  e('span', { className: "text-[11px] text-gray-500" }, "Terpilih: ", e('strong', { className: "text-gray-800" }, (WIZ_INDUSTRIES.find(x => x.id === wizIndustry) || {}).label))
+                ),
+                e('div', { className: "grid grid-cols-2 md:grid-cols-4 gap-2.5" },
+                  WIZ_INDUSTRIES.map(it => e('button', {
+                    key: it.id,
+                    type: "button",
+                    onClick: () => { setWizIndustry(it.id); setWizProduct(it.id === "kustom" ? -1 : 0); },
+                    className: "text-left p-3 rounded-xl border-2 transition-all cursor-pointer " + (wizIndustry === it.id ? "border-[#205c49] bg-emerald-50" : "border-[#EAE6F3] bg-white hover:border-[#EAE6F3]")
+                  },
+                    e('div', { className: "text-xl mb-2" }, it.icon),
+                    e('div', { className: "text-xs font-bold text-gray-800" }, it.label),
+                    it.sub && e('div', { className: "text-[10px] text-gray-400 mt-0.5" }, it.sub)
+                  ))
+                ),
+                wizIndustry === "kustom" && e('input', {
+                  type: "text",
+                  value: wizIndustryCustom,
+                  onChange: ev => setWizIndustryCustom(ev.target.value),
+                  placeholder: "Ketik industri Anda (contoh: Pendidikan Anak, Otomotif, Wisata)",
+                  className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs bg-white outline-none"
+                })
+              ),
+
+              // 2. Skala
+              e('div', { className: "space-y-2" },
+                e('div', { className: "flex items-center justify-between" },
+                  e('h4', { className: "text-xs font-bold text-gray-800" }, "2. Pilih Skala Bisnis:"),
+                  e('span', { className: "text-[11px] text-gray-500" }, "Terpilih: ", e('strong', { className: "text-gray-800" }, (WIZ_SCALES.find(x => x.id === wizScale) || {}).label))
+                ),
+                e('div', { className: "grid grid-cols-2 md:grid-cols-4 gap-2.5" },
+                  WIZ_SCALES.map(sc => e('button', {
+                    key: sc.id,
+                    type: "button",
+                    onClick: () => setWizScale(sc.id),
+                    className: "text-left p-3 rounded-xl border-2 transition-all cursor-pointer " + (wizScale === sc.id ? "border-[#205c49] bg-emerald-50" : "border-[#EAE6F3] bg-white hover:border-[#EAE6F3]")
+                  },
+                    e('div', { className: "text-lg mb-1" }, sc.icon || "🏢"),
+                    e('div', { className: "text-xs font-bold text-gray-800" }, sc.label),
+                    e('div', { className: "text-[10px] text-gray-400 mt-0.5 leading-snug" }, sc.desc)
+                  ))
+                ),
+                wizScale === "kustom" && e('input', {
+                  type: "text",
+                  value: wizScaleCustom,
+                  onChange: ev => setWizScaleCustom(ev.target.value),
+                  placeholder: "Jelaskan skala bisnis Anda (jumlah tim, omset, jangkauan)",
+                  className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs bg-white outline-none"
+                })
+              ),
+
+              // 3. Produk
+              e('div', { className: "space-y-2" },
+                e('h4', { className: "text-xs font-bold text-gray-800" }, "3. Pilih Layanan / Produk Utama:"),
+                e('div', { className: "grid grid-cols-1 md:grid-cols-3 gap-2.5" },
+                  (WIZ_PRODUCTS[wizIndustry] || []).map((pr, i) => e('button', {
+                    key: wizIndustry + i,
+                    type: "button",
+                    onClick: () => setWizProduct(i),
+                    className: "text-left p-3 rounded-xl border-2 transition-all cursor-pointer " + (wizProduct === i ? "border-[#205c49] bg-emerald-50" : "border-[#EAE6F3] bg-white hover:border-[#EAE6F3]")
+                  },
+                    e('div', { className: "text-xs font-bold text-gray-800" }, pr[0]),
+                    e('div', { className: "text-[10px] text-gray-500 mt-1 leading-snug" }, pr[1]),
+                    e('div', { className: "text-[10px] mt-1.5" }, e('strong', { className: "text-gray-700" }, "Target: "), e('span', { className: "text-gray-500" }, pr[2]))
+                  )),
+                  e('button', {
+                    type: "button",
+                    onClick: () => setWizProduct(-1),
+                    className: "text-left p-3 rounded-xl border-2 transition-all cursor-pointer " + ((wizProduct === -1 || wizIndustry === "kustom") ? "border-[#205c49] bg-emerald-50" : "border-[#EAE6F3] bg-white hover:border-[#EAE6F3]")
+                  },
+                    e('div', { className: "text-xs font-bold text-gray-800" }, "➕ Produk / Servis Kustom"),
+                    e('div', { className: "text-[10px] text-gray-500 mt-1 leading-snug" }, "Tuliskan produk atau jasa spesifik milik bisnis Anda"),
+                    e('div', { className: "text-[10px] font-bold text-gray-700 mt-1.5" }, "Input Bebas")
+                  )
+                ),
+                (wizProduct === -1 || wizIndustry === "kustom") && e('textarea', {
+                  rows: 2,
+                  value: wizProductCustom,
+                  onChange: ev => setWizProductCustom(ev.target.value),
+                  placeholder: "Tuliskan produk/jasa utama, siapa targetnya, dan apa yang membuatnya berbeda",
+                  className: "w-full px-3 py-2 rounded-xl border border-[#EAE6F3] text-xs bg-white outline-none"
+                })
+              )
+            ),
+
+            showAiBox && e('div', { className: "mt-3 space-y-2.5" },
+              e('textarea', {
+                rows: 3,
+                value: rawExtractText,
+                onChange: ev => setRawExtractText(ev.target.value),
+                placeholder: "Detail tambahan (opsional). Contoh: Saya punya brand skincare lokal 'Dew Botanicals' untuk wanita pekerja 25-35 tahun yang sibuk. Pembeda kami adalah formula minimalis 3 langkah bebas alkohol dengan hasil calming dalam 7 hari...",
+                className: "w-full p-3 rounded-xl border border-[#EAE6F3] text-xs focus:ring-2 focus:ring-[#6C43E3]/20 focus:border-[#6C43E3] focus:border-[#205c49] outline-none bg-[#F8F7FC]/50"
+              }),
+              e('div', { className: "flex items-center justify-between gap-3 flex-wrap" },
+                e('label', { className: "cursor-pointer inline-flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900" },
+                  e(Icon, { name: 'upload', className: "w-3.5 h-3.5" }),
+                  e('span', null, uploadedFileName ? ("File: " + uploadedFileName) : "Unggah proposal/dokumen (.md / .json / .txt)"),
+                  e('input', {
+                    type: "file",
+                    accept: ".json,.md,.markdown,.txt",
+                    onChange: handleQuickFileUpload,
+                    className: "hidden"
+                  })
+                ),
+                e('button', {
+                  type: "button",
+                  disabled: isExtracting,
+                  onClick: handleExtract,
+                  className: "px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#A051E6] to-[#6C43E3] hover:from-[#ED8A33] hover:to-[#ED8A33] text-white text-xs font-semibold flex items-center gap-1.5 transition-all duration-300 shadow-sm cursor-pointer disabled:opacity-50"
+                },
+                  e(Icon, { name: isExtracting ? 'refresh' : 'sparkles', className: "w-3.5 h-3.5 " + (isExtracting ? 'animate-spin' : 'text-amber-300') }),
+                  e('span', null, isExtracting ? "Menganalisis & Mengisi Brain..." : "Ekstrak Brand Brain via AI")
+                )
+              ),
+              analysisNote && e('div', { className: "p-3.5 rounded-2xl bg-[#F4F1FA] border border-[#EAE6F3] text-xs text-[#5B21B6] flex items-start gap-2.5" },
+                e(Icon, { name: 'check', className: "w-4 h-4 text-[#6C43E3] shrink-0 mt-0.5" }),
+                e('div', null,
+                  e('strong', { className: "font-bold" }, "Analisis Strategis: "),
+                  e('span', null, analysisNote)
+                )
+              )
+            )
+          )
+            ),
+            e('div', { className: "p-4 sm:px-6 bg-[#F8F7FC] border-t border-[#EAE6F3] flex items-center justify-end gap-2 shrink-0" },
+              e('button', {
+                type: "button",
+                onClick: () => setShowNewBrandModal(false),
+                className: "px-4 py-2 rounded-xl border border-[#EAE6F3] text-gray-600 text-xs font-semibold hover:bg-white cursor-pointer"
+              }, "Tutup / Batal")
+            )
+          )
+        ),
+        // --- RIWAYAT VERSI MODAL ---
+        showHistory && e('div', { className: "fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4" },
+          e('div', { className: "bg-white rounded-[28px] max-w-md w-full p-6 space-y-4 shadow-xl border border-[#EAE6F3]" },
+            e('div', { className: "flex items-center justify-between" },
+              e('div', null,
+                e('h3', { className: "text-sm font-bold text-gray-900" }, "🕘 Riwayat Versi"),
+                e('p', { className: "text-[11px] text-gray-500" }, "Snapshot otomatis sebelum AI atau impor mengubah data. Maksimal 10 per profil.")
+              ),
+              e('button', {
+                type: "button",
+                onClick: () => setShowHistory(false),
+                className: "text-gray-400 hover:text-gray-600 text-sm font-bold cursor-pointer"
+              }, "✕")
+            ),
+            e('button', {
+              type: "button",
+              onClick: () => { pushSnapshot("Snapshot manual"); notify("Snapshot manual disimpan.", "success"); },
+              className: "px-3 py-1.5 rounded-xl border border-[#EAE6F3] bg-white text-xs font-medium text-gray-700 cursor-pointer"
+            }, "+ Simpan Snapshot"),
+            history.filter(x => x.brandId === activeBrand.id).length === 0
+              ? e('p', { className: "text-xs text-gray-400" }, "Belum ada riwayat.")
+              : e('div', { className: "space-y-1.5 max-h-72 overflow-y-auto" },
+                  history.filter(x => x.brandId === activeBrand.id).map(h => e('div', {
+                    key: h.id,
+                    className: "p-2.5 rounded-lg bg-[#F8F7FC] border border-[#EAE6F3] flex items-center justify-between gap-2"
+                  },
+                    e('div', { className: "min-w-0" },
+                      e('div', { className: "text-xs font-semibold text-gray-800 truncate" }, h.label),
+                      e('div', { className: "text-[10px] text-gray-400" }, new Date(h.ts).toLocaleString("id-ID"))
+                    ),
+                    e('div', { className: "flex items-center gap-1 shrink-0" },
+                      e('button', {
+                        type: "button",
+                        onClick: () => { restoreSnapshot(h); setShowHistory(false); },
+                        className: "px-2.5 py-1 rounded-lg bg-[#205c49] text-white text-[11px] font-semibold cursor-pointer"
+                      }, "Kembalikan"),
+                      e('button', {
+                        type: "button",
+                        onClick: () => setHistory(prev => prev.filter(x => x.id !== h.id)),
+                        title: "Hapus snapshot",
+                        className: "p-1 text-red-500 hover:text-red-700 cursor-pointer"
+                      }, e(Icon, { name: 'trash', className: "w-3.5 h-3.5" }))
+                    )
+                  ))
+                )
+          )
+        ),
+
+        // --- PROFILES MANAGEMENT MODAL ---
+        showProfilesModal && e('div', { className: "fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4" },
+          e('div', { className: "bg-white rounded-[28px] max-w-md w-full p-6 space-y-4 shadow-xl border border-[#EAE6F3]" },
+            e('div', { className: "flex items-center justify-between" },
+              e('h3', { className: "text-sm font-bold text-gray-900" }, "Daftar Profil Brand"),
+              e('button', {
+                type: "button",
+                onClick: () => setShowProfilesModal(false),
+                className: "text-gray-400 hover:text-gray-600 text-sm font-bold cursor-pointer"
+              }, "✕")
+            ),
+            e('div', { className: "space-y-2 max-h-60 overflow-y-auto" },
+              profiles.map(p => {
+                const isCur = p.id === activeBrand.id;
+                return e('div', {
+                  key: p.id,
+                  className: "p-3 rounded-xl border flex items-center justify-between gap-2 " + (
+                    isCur ? 'border-[#205c49] bg-emerald-50/50' : 'border-[#EAE6F3] bg-white'
+                  )
+                },
+                  e('div', {
+                    onClick: () => {
+                      setActiveId(p.id);
+                      setShowProfilesModal(false);
+                    },
+                    className: "flex items-center gap-2 cursor-pointer flex-1"
+                  },
+                    e('span', { className: "w-3 h-3 rounded-full shrink-0", style: { backgroundColor: p.color || "#205c49" } }),
+                    e('div', { className: "text-xs font-bold text-gray-800 truncate" }, p.name || "Brand"),
+                    isCur && e('span', { className: "text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold" }, "Aktif")
+                  ),
+                  e('div', { className: "flex items-center gap-1" },
+                    e('button', {
+                      type: "button",
+                      onClick: () => duplicateBrand(p),
+                      title: "Duplikat Profil",
+                      className: "p-1.5 text-gray-500 hover:text-gray-700 cursor-pointer"
+                    }, e(Icon, { name: 'copy', className: "w-3.5 h-3.5" })),
+                    e('button', {
+                      type: "button",
+                      disabled: profiles.length <= 1,
+                      onClick: () => deleteBrand(p.id),
+                      title: "Hapus Profil",
+                      className: "p-1.5 text-red-500 hover:text-red-700 disabled:opacity-30 cursor-pointer"
+                    }, e(Icon, { name: 'trash', className: "w-3.5 h-3.5" }))
+                  )
+                );
+              })
+            ),
+            e('div', { className: "flex gap-2 pt-2 border-t" },
+              e('button', {
+                type: "button",
+                onClick: createNewBrand,
+                className: "flex-1 py-2 rounded-xl bg-[#205c49] text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+              },
+                e(Icon, { name: 'plus', className: "w-3.5 h-3.5" }),
+                e('span', null, "Tambah Brand Baru")
+              )
+            )
+          )
+        )
+      );
+    }
+
+    // Render App
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(BrandBrainApp));
+  </script>
+</body>
+</html>

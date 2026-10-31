@@ -263,7 +263,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Interactive AI Strategist Banner */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-[#17382d] via-[#205c49] to-[#286f58] text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-[#1b152c] via-[#352559] to-[#6c43e3] text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3.5">
           <div className="w-10 h-10 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
             <Compass className="w-5 h-5 text-amber-300" />
@@ -293,14 +293,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       </div>
 
       {/* Main Generator Box */}
-      <section className="bg-white rounded-3xl border border-[#dce4db] shadow-xs overflow-hidden">
-        <div className="p-4 sm:p-5 border-b border-[#edf1eb] flex flex-wrap items-center justify-between gap-3 bg-[#fafcf9]">
+      <section className="bg-white rounded-3xl border border-[#eae6f3] shadow-xs overflow-hidden">
+        <div className="p-4 sm:p-5 border-b border-[#f0ecf7] flex flex-wrap items-center justify-between gap-3 bg-[#fafcf9]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#eaf2ea] border border-[#d3e3d1] flex items-center justify-center text-[#205c49]">
+            <div className="w-8 h-8 rounded-xl bg-[#f4f1fa] border border-[#d3e3d1] flex items-center justify-center text-[#6c43e3]">
               <CalendarIcon className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-[#142620] font-heading">
+              <h2 className="text-sm font-bold text-[#1b152c] font-heading">
                 Kalender Editorial Konten
               </h2>
               <p className="text-xs text-[#687a70]">
@@ -327,7 +327,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           <div className="p-3.5 rounded-2xl bg-[#f2f7f3] border border-[#d2e4d4] flex items-start gap-3 text-xs text-[#204031]">
             <span className="text-lg">🎯</span>
             <div className="flex-1">
-              <div className="font-bold text-[#142620]">
+              <div className="font-bold text-[#1b152c]">
                 Omnichannel Harian: Minimal 1 Core Konten per Platform Setiap Hari
               </div>
               <p className="text-[11px] text-[#486354] mt-0.5 leading-relaxed">
@@ -342,7 +342,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             <div>
-              <label className="block text-xs font-semibold text-[#183127] mb-1.5">
+              <label className="block text-xs font-semibold text-[#1b152c] mb-1.5">
                 Topik / Fokus Kampanye
               </label>
               <input
@@ -351,7 +351,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 value={topic}
                 onChange={e => setTopic(e.target.value)}
                 placeholder="Contoh: Edukasi Kopi & Peluncuran Cold Brew"
-                className="w-full px-3 py-2 rounded-xl border border-[#d6dfd5] text-xs focus:ring-2 focus:ring-[#205c49]/30 focus:border-[#205c49] outline-none"
+                className="w-full px-3 py-2 rounded-xl border border-[#eae6f3] text-xs focus:ring-2 focus:ring-[#6c43e3]/30 focus:border-[#6c43e3] outline-none"
               />
             </div>
 
@@ -374,14 +374,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
             <div className="grid grid-cols-3 gap-2 sm:col-span-2 lg:col-span-1">
               <div>
-                <label className="block text-xs font-semibold text-[#183127] mb-1.5 truncate">
+                <label className="block text-xs font-semibold text-[#1b152c] mb-1.5 truncate">
                   Tujuan
                 </label>
                 <select
                   value={goal}
                   disabled={selectedFunnelStages.length > 0}
                   onChange={e => setGoal(e.target.value)}
-                  className="w-full px-2 py-2 rounded-xl border border-[#d6dfd5] text-xs focus:ring-2 focus:ring-[#205c49]/30 focus:border-[#205c49] outline-none bg-white font-medium cursor-pointer"
+                  className="w-full px-2 py-2 rounded-xl border border-[#eae6f3] text-xs focus:ring-2 focus:ring-[#6c43e3]/30 focus:border-[#6c43e3] outline-none bg-white font-medium cursor-pointer"
                 >
                   <option value="Awareness">Awareness</option>
                   <option value="Edukasi">Edukasi</option>
@@ -392,25 +392,25 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#183127] mb-1.5 truncate">
+                <label className="block text-xs font-semibold text-[#1b152c] mb-1.5 truncate">
                   Mulai
                 </label>
                 <input
                   type="date"
                   value={startDate}
                   onChange={e => setStartDate(e.target.value)}
-                  className="w-full px-2 py-2 rounded-xl border border-[#d6dfd5] text-xs focus:ring-2 focus:ring-[#205c49]/30 focus:border-[#205c49] outline-none"
+                  className="w-full px-2 py-2 rounded-xl border border-[#eae6f3] text-xs focus:ring-2 focus:ring-[#6c43e3]/30 focus:border-[#6c43e3] outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#183127] mb-1.5 truncate">
+                <label className="block text-xs font-semibold text-[#1b152c] mb-1.5 truncate">
                   Rentang
                 </label>
                 <select
                   value={count}
                   onChange={e => setCount(Number(e.target.value))}
-                  className="w-full px-2 py-2 rounded-xl border border-[#d6dfd5] text-xs focus:ring-2 focus:ring-[#205c49]/30 focus:border-[#205c49] outline-none bg-white font-semibold cursor-pointer"
+                  className="w-full px-2 py-2 rounded-xl border border-[#eae6f3] text-xs focus:ring-2 focus:ring-[#6c43e3]/30 focus:border-[#6c43e3] outline-none bg-white font-semibold cursor-pointer"
                 >
                   <option value={1}>1 Hari ({calculatedPlatformsPerDay} Post)</option>
                   <option value={3}>3 Hari (Mini Sprint • {3 * calculatedPlatformsPerDay} Post)</option>
@@ -425,7 +425,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           {/* Funnel Stage Selector */}
           <div className="p-4 rounded-2xl border border-[#d2e4d4] bg-[#fafcf9] space-y-3">
             <div className="flex flex-wrap items-baseline justify-between gap-1.5">
-              <div className="text-xs font-bold text-[#142620] flex items-center gap-1.5">
+              <div className="text-xs font-bold text-[#1b152c] flex items-center gap-1.5">
                 <span>🎯 Pilih Tujuan Konten (Tahap Funnel)</span>
               </div>
               <div className="text-[11px] text-[#687a70]">
@@ -439,19 +439,19 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 onClick={() => setSelectedFunnelStages([])}
                 className={`text-left p-3 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                   selectedFunnelStages.length === 0
-                    ? "border-2 border-[#205c49] bg-[#eaf2ea] shadow-xs"
-                    : "border-[#d6dfd5] bg-white hover:bg-[#f6faf6]"
+                    ? "border-2 border-[#6c43e3] bg-[#f4f1fa] shadow-xs"
+                    : "border-[#eae6f3] bg-white hover:bg-[#f8f7fc]"
                 }`}
               >
                 <div>
                   <span className="text-xl block mb-1">⚖️</span>
-                  <div className="text-xs font-bold text-[#142620]">Otomatis (Rasio Brand Brain)</div>
+                  <div className="text-xs font-bold text-[#1b152c]">Otomatis (Rasio Brand Brain)</div>
                   <div className="text-[10.5px] text-[#5c6e64] mt-1 leading-relaxed">
                     Semua tahap dibagi proporsional sesuai acuan Brand Brain
                   </div>
                 </div>
                 {selectedFunnelStages.length === 0 && (
-                  <span className="text-[10px] font-bold text-[#205c49] mt-2 block">✓ Terpilih</span>
+                  <span className="text-[10px] font-bold text-[#6c43e3] mt-2 block">✓ Terpilih</span>
                 )}
               </button>
 
@@ -468,19 +468,19 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     }}
                     className={`text-left p-3 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                       isSelected
-                        ? "border-2 border-[#205c49] bg-[#eaf2ea] shadow-xs"
-                        : "border-[#d6dfd5] bg-white hover:bg-[#f6faf6]"
+                        ? "border-2 border-[#6c43e3] bg-[#f4f1fa] shadow-xs"
+                        : "border-[#eae6f3] bg-white hover:bg-[#f8f7fc]"
                     }`}
                   >
                     <div>
                       <span className="text-xl block mb-1">{s.icon}</span>
-                      <div className="text-xs font-bold text-[#142620]">{s.title}</div>
+                      <div className="text-xs font-bold text-[#1b152c]">{s.title}</div>
                       <div className="text-[10.5px] text-[#5c6e64] mt-1 leading-relaxed">
                         {s.goal}
                       </div>
                     </div>
                     {isSelected && (
-                      <span className="text-[10px] font-bold text-[#205c49] mt-2 block">✓ Terpilih</span>
+                      <span className="text-[10px] font-bold text-[#6c43e3] mt-2 block">✓ Terpilih</span>
                     )}
                   </button>
                 );
@@ -491,7 +491,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           {/* Content Type Selector */}
           <div className="p-4 rounded-2xl border border-[#d2e4d4] bg-[#fafcf9] space-y-3">
             <div className="flex flex-wrap items-baseline justify-between gap-1.5">
-              <div className="text-xs font-bold text-[#142620]">
+              <div className="text-xs font-bold text-[#1b152c]">
                 🎴 Pilih Tipe Konten yang Akan Dibuat
               </div>
               <div className="text-[11px] text-[#687a70]">
@@ -505,17 +505,17 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 onClick={() => setSelectedContentTypes([])}
                 className={`p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   selectedContentTypes.length === 0
-                    ? "border-2 border-[#205c49] bg-[#eaf2ea] shadow-xs"
-                    : "border-[#d6dfd5] bg-white hover:bg-[#f6faf6]"
+                    ? "border-2 border-[#6c43e3] bg-[#f4f1fa] shadow-xs"
+                    : "border-[#eae6f3] bg-white hover:bg-[#f8f7fc]"
                 }`}
               >
                 <div>
                   <span className="text-lg block mb-0.5">✨</span>
-                  <div className="text-xs font-bold text-[#142620]">Semua Tipe</div>
+                  <div className="text-xs font-bold text-[#1b152c]">Semua Tipe</div>
                   <div className="text-[10px] text-[#5c6e64] mt-0.5">Omnichannel harian</div>
                 </div>
                 {selectedContentTypes.length === 0 && (
-                  <span className="text-[9px] font-bold text-[#205c49] mt-1.5 block">✓ Aktif</span>
+                  <span className="text-[9px] font-bold text-[#6c43e3] mt-1.5 block">✓ Aktif</span>
                 )}
               </button>
 
@@ -532,19 +532,19 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     }}
                     className={`p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                       isSelected
-                        ? "border-2 border-[#205c49] bg-[#eaf2ea] shadow-xs"
-                        : "border-[#d6dfd5] bg-white hover:bg-[#f6faf6]"
+                        ? "border-2 border-[#6c43e3] bg-[#f4f1fa] shadow-xs"
+                        : "border-[#eae6f3] bg-white hover:bg-[#f8f7fc]"
                     }`}
                   >
                     <div>
                       <span className="text-lg block mb-0.5">{t.icon}</span>
-                      <div className="text-xs font-bold text-[#142620] truncate">{t.name}</div>
+                      <div className="text-xs font-bold text-[#1b152c] truncate">{t.name}</div>
                       <div className="text-[10px] text-[#5c6e64] mt-0.5 line-clamp-1">
                         {t.spec.split("•")[0]}
                       </div>
                     </div>
                     {isSelected && (
-                      <span className="text-[9px] font-bold text-[#205c49] mt-1.5 block">✓ Aktif</span>
+                      <span className="text-[9px] font-bold text-[#6c43e3] mt-1.5 block">✓ Aktif</span>
                     )}
                   </button>
                 );
@@ -553,7 +553,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           </div>
 
           {/* Form Actions */}
-          <div className="pt-4 border-t border-[#edf1eb] flex flex-wrap items-center justify-between gap-3">
+          <div className="pt-4 border-t border-[#f0ecf7] flex flex-wrap items-center justify-between gap-3">
             <div className="text-xs text-[#687a70]">
               Brand acuan: <strong>{brand.name}</strong> • Audiens:{" "}
               {brand.audience ? `${brand.audience.slice(0, 40)}…` : "Umum"}{" "}
@@ -564,7 +564,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               type="submit"
               disabled={isGenerating}
               className={`py-2.5 px-6 rounded-2xl font-bold text-xs transition-all shadow-md flex items-center gap-2 disabled:opacity-50 whitespace-nowrap cursor-pointer text-white ${
-                trendContext.trim() ? "bg-rose-700 hover:bg-rose-800" : "bg-[#205c49] hover:bg-[#184738]"
+                trendContext.trim() ? "bg-rose-700 hover:bg-rose-800" : "bg-[#6c43e3] hover:bg-[#ed8a33]"
               }`}
             >
               {isGenerating ? (
@@ -596,26 +596,26 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       {/* When Empty */}
       {items.length === 0 ? (
         <div className="p-12 rounded-3xl border-2 border-dashed border-[#d1ded0] bg-[#fafcf9] text-center max-w-xl mx-auto space-y-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#ecf4ea] text-[#205c49] flex items-center justify-center mx-auto shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-[#ecf4ea] text-[#6c43e3] flex items-center justify-center mx-auto shadow-xs">
             <CalendarIcon className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-bold text-[#183127] font-heading">
+          <h3 className="text-base font-bold text-[#1b152c] font-heading">
             Belum ada kalender konten aktif
           </h3>
-          <p className="text-xs text-[#52665b] leading-relaxed max-w-[65ch] mx-auto">
+          <p className="text-xs text-[#736c87] leading-relaxed max-w-[65ch] mx-auto">
             Tentukan fokus topik di atas, lalu klik <strong>"Susun Rencana Konten"</strong>. Anda juga dapat memilih <strong>1 Hari</strong> untuk ide postingan tunggal spesifik, atau klik tombol manual di bawah.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button
               onClick={handleSubmitPlan}
-              className="py-2.5 px-5 rounded-2xl bg-[#205c49] text-white text-xs font-semibold hover:bg-[#184738] transition-all whitespace-nowrap shadow-xs cursor-pointer"
+              className="py-2.5 px-5 rounded-2xl bg-[#6c43e3] text-white text-xs font-semibold hover:bg-[#ed8a33] transition-all whitespace-nowrap shadow-xs cursor-pointer"
             >
               Mulai Susun Konten ({count} Hari)
             </button>
             <button
               type="button"
               onClick={handleAddManualItem}
-              className="py-2.5 px-5 rounded-2xl bg-white border border-[#d6dfd5] text-[#205c49] text-xs font-semibold hover:bg-[#f3f7f2] transition-all whitespace-nowrap shadow-2xs flex items-center gap-1.5 cursor-pointer"
+              className="py-2.5 px-5 rounded-2xl bg-white border border-[#eae6f3] text-[#6c43e3] text-xs font-semibold hover:bg-[#f3f7f2] transition-all whitespace-nowrap shadow-2xs flex items-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>+ Buat 1 Konten Saja</span>
@@ -626,18 +626,18 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
         /* Results Section */
         <section className="space-y-4">
           {/* Platform Filter Tabs */}
-          <div className="bg-white p-3.5 rounded-3xl border border-[#dce4db] shadow-xs space-y-2.5">
+          <div className="bg-white p-3.5 rounded-3xl border border-[#eae6f3] shadow-xs space-y-2.5">
             <div className="flex flex-wrap items-center justify-between gap-2 px-1">
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#52665b]">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#736c87]">
                   Filter Akun Platform
                 </span>
-                <span className="text-[10px] bg-[#ecf4ea] text-[#205c49] font-bold px-2 py-0.5 rounded-full border border-[#d3e3d1]">
+                <span className="text-[10px] bg-[#ecf4ea] text-[#6c43e3] font-bold px-2 py-0.5 rounded-full border border-[#d3e3d1]">
                   Unified Master Calendar
                 </span>
               </div>
               <div className="text-xs text-[#6a7c72]">
-                Total: <strong className="text-[#142620]">{items.length}</strong> konten terjadwal
+                Total: <strong className="text-[#1b152c]">{items.length}</strong> konten terjadwal
               </div>
             </div>
 
@@ -711,7 +711,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           </div>
 
           {/* Search, Filter & View Controls */}
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-3xl border border-[#dce4db]">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-3xl border border-[#eae6f3]">
             <div className="flex flex-wrap items-center gap-2 flex-1 min-w-[280px]">
               <div className="relative flex-1 max-w-xs">
                 <Search className="w-3.5 h-3.5 text-[#819488] absolute left-3 top-1/2 -translate-y-1/2" />
@@ -720,14 +720,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                   placeholder="Cari ide, hook, pilar, atau platform..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-[#d6dfd5] outline-none focus:border-[#205c49]"
+                  className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-[#eae6f3] outline-none focus:border-[#6c43e3]"
                 />
               </div>
 
               <select
                 value={filterPlacement}
                 onChange={e => setFilterPlacement(e.target.value)}
-                className="py-1.5 px-3 text-xs rounded-xl border border-[#d6dfd5] bg-white outline-none font-semibold text-[#1f4a3a] cursor-pointer"
+                className="py-1.5 px-3 text-xs rounded-xl border border-[#eae6f3] bg-white outline-none font-semibold text-[#1f4a3a] cursor-pointer"
               >
                 <option value="all">Semua Tipe Placement</option>
                 {Object.entries(placementTypesData).map(([k, t]) => (
@@ -740,7 +740,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               <select
                 value={filterPillar}
                 onChange={e => setFilterPillar(e.target.value)}
-                className="py-1.5 px-3 text-xs rounded-xl border border-[#d6dfd5] bg-white outline-none cursor-pointer"
+                className="py-1.5 px-3 text-xs rounded-xl border border-[#eae6f3] bg-white outline-none cursor-pointer"
               >
                 <option value="all">Semua Pilar</option>
                 {defaultPillars.map(p => (
@@ -753,7 +753,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               <select
                 value={filterStatus}
                 onChange={e => setFilterStatus(e.target.value)}
-                className="py-1.5 px-3 text-xs rounded-xl border border-[#d6dfd5] bg-white outline-none cursor-pointer"
+                className="py-1.5 px-3 text-xs rounded-xl border border-[#eae6f3] bg-white outline-none cursor-pointer"
               >
                 <option value="all">Semua Status</option>
                 <option value="draft">📝 Draf</option>
@@ -767,20 +767,20 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               <button
                 type="button"
                 onClick={handleAddManualItem}
-                className="py-1.5 px-3.5 rounded-xl bg-[#205c49] hover:bg-[#184738] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer whitespace-nowrap"
+                className="py-1.5 px-3.5 rounded-xl bg-[#6c43e3] hover:bg-[#ed8a33] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer whitespace-nowrap"
                 title="Tambah 1 postingan baru ke kalender aktif"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>+ Tambah 1 Konten</span>
               </button>
 
-              <div className="flex items-center bg-[#f1f5ef] p-1 rounded-xl border border-[#dce4db]">
+              <div className="flex items-center bg-[#f1f5ef] p-1 rounded-xl border border-[#eae6f3]">
                 <button
                   onClick={() => setViewMode('table')}
                   className={`flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
                     viewMode === 'table'
-                      ? 'bg-white text-[#183127] shadow-xs'
-                      : 'text-[#64756b] hover:text-[#183127]'
+                      ? 'bg-white text-[#1b152c] shadow-xs'
+                      : 'text-[#64756b] hover:text-[#1b152c]'
                   }`}
                 >
                   <TableIcon className="w-3.5 h-3.5" />
@@ -790,8 +790,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                   onClick={() => setViewMode('calendar')}
                   className={`flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
                     viewMode === 'calendar'
-                      ? 'bg-white text-[#183127] shadow-xs'
-                      : 'text-[#64756b] hover:text-[#183127]'
+                      ? 'bg-white text-[#1b152c] shadow-xs'
+                      : 'text-[#64756b] hover:text-[#1b152c]'
                   }`}
                 >
                   <CalendarIcon className="w-3.5 h-3.5" />
@@ -801,8 +801,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                   onClick={() => setViewMode('kanban')}
                   className={`flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
                     viewMode === 'kanban'
-                      ? 'bg-white text-[#183127] shadow-xs'
-                      : 'text-[#64756b] hover:text-[#183127]'
+                      ? 'bg-white text-[#1b152c] shadow-xs'
+                      : 'text-[#64756b] hover:text-[#1b152c]'
                   }`}
                 >
                   <Kanban className="w-3.5 h-3.5" />
@@ -814,14 +814,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
           {/* VIEW: TABLE */}
           {viewMode === 'table' && (
-            <div className="bg-white rounded-3xl border border-[#dce4db] overflow-hidden shadow-xs">
-              <div className="p-3.5 border-b border-[#edf1eb] bg-[#fafcf9] flex flex-wrap items-center justify-between gap-3">
+            <div className="bg-white rounded-3xl border border-[#eae6f3] overflow-hidden shadow-xs">
+              <div className="p-3.5 border-b border-[#f0ecf7] bg-[#fafcf9] flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={handleSelectAll}
-                      className="p-1 rounded hover:bg-[#eaf4ea] text-[#205c49] transition-colors cursor-pointer"
+                      className="p-1 rounded hover:bg-[#eaf4ea] text-[#6c43e3] transition-colors cursor-pointer"
                       title={
                         filteredItems.length > 0 && filteredItems.every(it => selectedIds.has(it.id))
                           ? "Batalkan pilihan semua"
@@ -832,10 +832,10 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         type="checkbox"
                         checked={filteredItems.length > 0 && filteredItems.every(it => selectedIds.has(it.id))}
                         onChange={handleSelectAll}
-                        className="w-4 h-4 rounded text-[#205c49] accent-[#205c49] cursor-pointer"
+                        className="w-4 h-4 rounded text-[#6c43e3] accent-[#6c43e3] cursor-pointer"
                       />
                     </button>
-                    <span className="text-xs font-bold text-[#142620]">
+                    <span className="text-xs font-bold text-[#1b152c]">
                       {selectedIds.size > 0 ? (
                         <span className="inline-flex items-center gap-1.5 text-[#1b5140] font-mono bg-[#eaf4ea] px-2.5 py-0.5 rounded-full border border-[#cbe0cb]">
                           <span>✓</span>
@@ -874,14 +874,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     <button
                       type="button"
                       onClick={handleExportSelectedToCalendar}
-                      className="py-1.5 px-3 rounded-xl bg-[#205c49] hover:bg-[#184839] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+                      className="py-1.5 px-3 rounded-xl bg-[#6c43e3] hover:bg-[#184839] text-white text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
                       title="Ekspor konten terpilih sebagai paket untuk Ruang Kalender"
                     >
                       <span>🚀</span>
                       <span>Kirim ({selectedIds.size}) ke Ruang Kalender</span>
                     </button>
 
-                    <div className="flex items-center gap-1 bg-white border border-[#d6dfd5] rounded-xl p-0.5 text-xs font-medium shadow-2xs">
+                    <div className="flex items-center gap-1 bg-white border border-[#eae6f3] rounded-xl p-0.5 text-xs font-medium shadow-2xs">
                       <span className="text-[11px] text-[#6b7e73] px-2 font-semibold">
                         Ubah Status:
                       </span>
@@ -920,7 +920,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     <button
                       type="button"
                       onClick={handleSelectAll}
-                      className="text-xs text-[#205c49] hover:underline font-semibold cursor-pointer"
+                      className="text-xs text-[#6c43e3] hover:underline font-semibold cursor-pointer"
                     >
                       Pilih Semua ({filteredItems.length})
                     </button>
@@ -934,13 +934,13 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-[#fafcf9] border-b border-[#edf1eb] text-xs font-semibold text-[#52665b]">
+                    <tr className="bg-[#fafcf9] border-b border-[#f0ecf7] text-xs font-semibold text-[#736c87]">
                       <th className="py-3 px-3 w-12 text-center">
                         <input
                           type="checkbox"
                           checked={filteredItems.length > 0 && filteredItems.every(it => selectedIds.has(it.id))}
                           onChange={handleSelectAll}
-                          className="w-4 h-4 rounded text-[#205c49] accent-[#205c49] cursor-pointer"
+                          className="w-4 h-4 rounded text-[#6c43e3] accent-[#6c43e3] cursor-pointer"
                         />
                       </th>
                       <th className="py-3 px-3 w-28">Tanggal & Jam</th>
@@ -952,7 +952,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       <th className="py-3 px-3 w-40 text-right">Aksi</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#edf1eb] text-xs">
+                  <tbody className="divide-y divide-[#f0ecf7] text-xs">
                     {filteredItems.map((item, idx) => {
                       const date = item.fields.Tanggal || "-";
                       const time = item.fields["Jam Tayang"];
@@ -971,7 +971,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         <tr
                           key={item.id}
                           className={`transition-colors ${
-                            isSelected ? "bg-[#ebf4ea] hover:bg-[#dfeee0]" : "hover:bg-[#f9fbf8]"
+                            isSelected ? "bg-[#f4f1fa] hover:bg-[#dfeee0]" : "hover:bg-[#f9fbf8]"
                           }`}
                         >
                           <td className="py-3.5 px-3 align-top text-center">
@@ -979,17 +979,17 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => toggleSelect(item.id)}
-                              className="w-4 h-4 rounded text-[#205c49] accent-[#205c49] cursor-pointer mt-1"
+                              className="w-4 h-4 rounded text-[#6c43e3] accent-[#6c43e3] cursor-pointer mt-1"
                             />
                           </td>
                           <td className="py-3.5 px-3 align-top font-medium text-[#4b5e52]">
-                            <div className="text-sm font-bold text-[#142620]">
+                            <div className="text-sm font-bold text-[#1b152c]">
                               {date.slice(8) || String(idx + 1).padStart(2, "0")}
                             </div>
                             <div className="text-[11px] text-[#6b7e73] font-mono">{date.slice(0, 7)}</div>
                             {time && (
-                              <div className="flex items-center gap-1 text-[10px] font-semibold text-[#205c49] mt-1 bg-[#eef5ee] px-1.5 py-0.5 rounded w-fit">
-                                <Clock className="w-2.5 h-2.5 text-[#205c49]" />
+                              <div className="flex items-center gap-1 text-[10px] font-semibold text-[#6c43e3] mt-1 bg-[#f4f1fa] px-1.5 py-0.5 rounded w-fit">
+                                <Clock className="w-2.5 h-2.5 text-[#6c43e3]" />
                                 <span>{time}</span>
                               </div>
                             )}
@@ -1046,8 +1046,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                             </div>
                           </td>
                           <td className="py-3.5 px-4 align-top">
-                            <div className="font-bold text-[#142620] text-xs mb-1">{hook}</div>
-                            <div className="text-xs text-[#52665b] line-clamp-2 leading-relaxed">
+                            <div className="font-bold text-[#1b152c] text-xs mb-1">{hook}</div>
+                            <div className="text-xs text-[#736c87] line-clamp-2 leading-relaxed">
                               {angle}
                             </div>
                           </td>
@@ -1074,7 +1074,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                               <button
                                 type="button"
                                 onClick={() => onViewBrief(item)}
-                                className="py-1 px-2 rounded-lg border border-[#205c49] bg-[#205c49] hover:bg-[#184738] text-xs font-semibold text-white flex items-center gap-1 shadow-2xs whitespace-nowrap cursor-pointer"
+                                className="py-1 px-2 rounded-lg border border-[#6c43e3] bg-[#6c43e3] hover:bg-[#ed8a33] text-xs font-semibold text-white flex items-center gap-1 shadow-2xs whitespace-nowrap cursor-pointer"
                                 title="Lihat rencana konten & brief"
                               >
                                 <span>📄</span>
@@ -1082,7 +1082,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                               </button>
                               <button
                                 onClick={() => onEditItem(item)}
-                                className="py-1 px-2 rounded-lg border border-[#d6dfd5] bg-white hover:bg-[#f1f6ef] text-xs font-semibold text-[#205c49] flex items-center gap-1 shadow-2xs whitespace-nowrap cursor-pointer"
+                                className="py-1 px-2 rounded-lg border border-[#eae6f3] bg-white hover:bg-[#f8f7fc] text-xs font-semibold text-[#6c43e3] flex items-center gap-1 shadow-2xs whitespace-nowrap cursor-pointer"
                                 title="Edit naskah & detail"
                               >
                                 <PenLine className="w-3 h-3" />
@@ -1109,7 +1109,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
           {/* VIEW: CALENDAR */}
           {viewMode === 'calendar' && (
-            <div className="bg-white rounded-3xl border border-[#dce4db] p-5 shadow-xs">
+            <div className="bg-white rounded-3xl border border-[#eae6f3] p-5 shadow-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5">
                 {filteredItems.map((item, idx) => {
                   const date = item.fields.Tanggal || "";
@@ -1128,8 +1128,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                       key={item.id}
                       className={`p-3.5 rounded-2xl border transition-all flex flex-col justify-between ${
                         isSelected
-                          ? "border-[#205c49] bg-[#ebf4ea] shadow-xs ring-1 ring-[#205c49]/20"
-                          : "border-[#dce4db] bg-[#fafcf9] hover:bg-white hover:shadow-xs"
+                          ? "border-[#6c43e3] bg-[#f4f1fa] shadow-xs ring-1 ring-[#6c43e3]/20"
+                          : "border-[#eae6f3] bg-[#fafcf9] hover:bg-white hover:shadow-xs"
                       }`}
                     >
                       <div>
@@ -1139,15 +1139,15 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => toggleSelect(item.id)}
-                              className="w-4 h-4 rounded text-[#205c49] accent-[#205c49] cursor-pointer"
+                              className="w-4 h-4 rounded text-[#6c43e3] accent-[#6c43e3] cursor-pointer"
                             />
-                            <span className="text-xs font-bold text-[#205c49] font-mono">
+                            <span className="text-xs font-bold text-[#6c43e3] font-mono">
                               {date || `Hari #${idx + 1}`}
                             </span>
                           </div>
                           {time && (
-                            <span className="text-[10px] text-[#4b5e52] font-semibold flex items-center gap-0.5 bg-[#ecf3ea] px-1.5 py-0.5 rounded">
-                              <Clock className="w-2.5 h-2.5 text-[#205c49]" />
+                            <span className="text-[10px] text-[#4b5e52] font-semibold flex items-center gap-0.5 bg-[#f4f1fa] px-1.5 py-0.5 rounded">
+                              <Clock className="w-2.5 h-2.5 text-[#6c43e3]" />
                               {time}
                             </span>
                           )}
@@ -1167,7 +1167,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                           </span>
                         </div>
 
-                        <div className="text-[10px] text-[#2d5242] bg-[#ebf4ea] px-1.5 py-0.5 rounded font-medium mb-2 truncate">
+                        <div className="text-[10px] text-[#2d5242] bg-[#f4f1fa] px-1.5 py-0.5 rounded font-medium mb-2 truncate">
                           📍 {penempatan}
                         </div>
 
@@ -1181,12 +1181,12 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                           </span>
                         </div>
 
-                        <h4 className="text-xs font-bold text-[#142620] mb-2 line-clamp-2 leading-snug">
+                        <h4 className="text-xs font-bold text-[#1b152c] mb-2 line-clamp-2 leading-snug">
                           {hook}
                         </h4>
                       </div>
 
-                      <div className="pt-2 border-t border-[#edf1eb] flex items-center justify-between">
+                      <div className="pt-2 border-t border-[#f0ecf7] flex items-center justify-between">
                         <select
                           value={item.status}
                           onChange={e => onStatusChange(item.id, e.target.value as ContentStatus)}
@@ -1201,7 +1201,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         <div className="flex items-center gap-1.5">
                           <button
                             onClick={() => onViewBrief(item)}
-                            className="text-[11px] font-semibold text-[#205c49] hover:underline cursor-pointer"
+                            className="text-[11px] font-semibold text-[#6c43e3] hover:underline cursor-pointer"
                           >
                             Brief →
                           </button>
@@ -1235,7 +1235,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 return (
                   <div
                     key={col.id}
-                    className="bg-[#f5f8f4] p-3.5 rounded-3xl border border-[#dce4db] flex flex-col min-h-[420px]"
+                    className="bg-[#f5f8f4] p-3.5 rounded-3xl border border-[#eae6f3] flex flex-col min-h-[420px]"
                   >
                     <div className="flex items-center justify-between mb-3 px-1">
                       <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${col.color}`}>
@@ -1255,7 +1255,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                         return (
                           <div
                             key={it.id}
-                            className="p-3 bg-white rounded-2xl border border-[#dce4db] shadow-2xs hover:shadow-xs transition-all space-y-2"
+                            className="p-3 bg-white rounded-2xl border border-[#eae6f3] shadow-2xs hover:shadow-xs transition-all space-y-2"
                           >
                             <div className="flex items-center justify-between gap-1">
                               <span
@@ -1273,23 +1273,23 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
                             <div className="flex items-center justify-between text-[10px] text-[#718278] font-mono">
                               <span>{it.fields.Tanggal || "Tanggal -"}</span>
-                              {time && <span className="text-[#205c49] font-semibold">{time}</span>}
+                              {time && <span className="text-[#6c43e3] font-semibold">{time}</span>}
                             </div>
 
-                            <div className="text-xs font-bold text-[#142620] leading-snug">
+                            <div className="text-xs font-bold text-[#1b152c] leading-snug">
                               {it.fields.Hook || it.title}
                             </div>
 
                             <div className="flex items-center justify-between pt-2 border-t border-[#f0f4ee]">
                               <button
                                 onClick={() => onViewBrief(it)}
-                                className="text-[10px] font-semibold text-[#205c49] hover:underline cursor-pointer"
+                                className="text-[10px] font-semibold text-[#6c43e3] hover:underline cursor-pointer"
                               >
                                 📄 Brief
                               </button>
                               <button
                                 onClick={() => onEditItem(it)}
-                                className="text-[10px] font-semibold text-stone-600 hover:text-[#205c49] cursor-pointer"
+                                className="text-[10px] font-semibold text-stone-600 hover:text-[#6c43e3] cursor-pointer"
                               >
                                 Edit
                               </button>

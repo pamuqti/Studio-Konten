@@ -102,7 +102,7 @@ export const PublishingCalendarView: React.FC<PublishingCalendarViewProps> = ({
   return (
     <div className="space-y-5">
       {/* Top Banner Staging Jeda Produksi */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-[#17382d] via-[#205c49] to-[#286f58] text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-[#17382d] via-[#6c43e3] to-[#286f58] text-white shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3.5">
           <div className="w-10 h-10 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
             <Calendar className="w-5 h-5 text-emerald-300" />
@@ -137,7 +137,7 @@ export const PublishingCalendarView: React.FC<PublishingCalendarViewProps> = ({
             onClick={onNewPost}
             className="px-4 py-2 rounded-2xl bg-white hover:bg-stone-50 text-[#17382d] font-bold text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
           >
-            <Plus className="w-3.5 h-3.5 text-[#205c49]" />
+            <Plus className="w-3.5 h-3.5 text-[#6c43e3]" />
             <span>Jadwalkan Konten</span>
           </button>
         </div>
@@ -220,13 +220,13 @@ export const PublishingCalendarView: React.FC<PublishingCalendarViewProps> = ({
               <div
                 key={dateStr}
                 className={`bg-white min-h-[120px] p-2 flex flex-col justify-between group transition-colors hover:bg-emerald-50/20 ${
-                  isToday ? 'ring-2 ring-[#205c49] ring-inset z-10' : ''
+                  isToday ? 'ring-2 ring-[#6c43e3] ring-inset z-10' : ''
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      isToday ? 'bg-[#205c49] text-white shadow-2xs' : 'text-[#2a3c33]'
+                      isToday ? 'bg-[#6c43e3] text-white shadow-2xs' : 'text-[#2a3c33]'
                     }`}
                   >
                     {dayNum}
@@ -245,11 +245,11 @@ export const PublishingCalendarView: React.FC<PublishingCalendarViewProps> = ({
                     <div
                       key={p.id}
                       onClick={() => onEditPost(p)}
-                      className="p-1.5 rounded-xl border border-[#dbe3db] bg-[#fbfdfb] hover:border-[#205c49] hover:shadow-xs transition-all cursor-pointer text-left"
+                      className="p-1.5 rounded-xl border border-[#dbe3db] bg-[#fbfdfb] hover:border-[#6c43e3] hover:shadow-xs transition-all cursor-pointer text-left"
                     >
                       <div className="flex items-center justify-between gap-1 mb-1">
                         <span className="text-[10px] font-bold text-[#1f332a] flex items-center gap-1">
-                          <Clock className="w-2.5 h-2.5 text-[#205c49]" />
+                          <Clock className="w-2.5 h-2.5 text-[#6c43e3]" />
                           <span>{p.scheduledTime}</span>
                         </span>
                         {getStatusBadge(p.overallStatus)}

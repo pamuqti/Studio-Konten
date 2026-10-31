@@ -113,29 +113,29 @@ export const Header: React.FC<HeaderProps> = ({
         {onToggleMobileMenu && (
           <button
             onClick={onToggleMobileMenu}
-            className="md:hidden p-1.5 -ml-1 text-[#52665b] hover:text-[#183127] rounded-lg hover:bg-[#f1f5ef] cursor-pointer"
+            className="md:hidden p-1.5 -ml-1 text-[#736c87] hover:text-[#1b152c] rounded-lg hover:bg-[#f1f5ef] cursor-pointer"
             title="Buka Menu"
           >
             <Menu className="w-5 h-5" />
           </button>
         )}
         <div className="flex items-center gap-2 truncate">
-          <span className="text-[#728378] font-medium hidden sm:inline">Ruang Kerja</span>
-          <span className="text-[#b5c2b9] hidden sm:inline">/</span>
-          <span className="font-semibold text-[#183127] font-heading text-sm truncate">
+          <span className="text-[#736c87] font-medium hidden sm:inline">Ruang Kerja</span>
+          <span className="text-[#d7d0eb] hidden sm:inline">/</span>
+          <span className="font-semibold text-[#1b152c] font-heading text-sm truncate">
             {getViewTitle()}
           </span>
 
           {/* Mode Switcher Pill */}
           {onSelectView && (
-            <div className="hidden md:flex items-center bg-[#f1f5ef] p-0.5 rounded-xl border border-[#dce5db] ml-3">
+            <div className="hidden md:flex items-center bg-[#f8f7fc] p-0.5 rounded-full border border-[#eae6f3] ml-3">
               <button
                 type="button"
                 onClick={() => onSelectView('plan')}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   currentView === 'plan'
-                    ? 'bg-[#205c49] text-white shadow-2xs'
-                    : 'text-[#4e6357] hover:text-[#183127]'
+                    ? 'bg-[#1b152c] text-white shadow-xs'
+                    : 'text-[#4e6357] hover:text-[#1b152c]'
                 }`}
               >
                 📋 Ruang Rencana
@@ -145,8 +145,8 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => onSelectView('publish_calendar')}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   currentView === 'publish_calendar'
-                    ? 'bg-[#205c49] text-white shadow-2xs'
-                    : 'text-[#4e6357] hover:text-[#183127]'
+                    ? 'bg-[#1b152c] text-white shadow-xs'
+                    : 'text-[#4e6357] hover:text-[#1b152c]'
                 }`}
               >
                 📅 Ruang Tayang
@@ -170,13 +170,13 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onOpenPool}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200 text-xs font-bold text-amber-900 transition-all cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#fff4eb] hover:bg-[#ffe8d6] border border-[#fad8be] text-xs font-bold text-[#d97218] rounded-full transition-all cursor-pointer shadow-2xs"
             title="Buka Kantong Naskah Siap Tayang"
           >
             <span>📥</span>
             <span className="hidden sm:inline">Kantong Naskah</span>
             {approvedCount > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-amber-600 text-white">
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-[#ed8a33] text-white">
                 {approvedCount}
               </span>
             )}
@@ -188,7 +188,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onOpenConnections}
-            className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-[#f6faf4] border border-[#dce4db] text-xs font-semibold text-[#183127] transition-all cursor-pointer shadow-2xs"
+            className="hidden lg:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white hover:bg-[#f4f1fa] border border-[#eae6f3] text-xs font-semibold text-[#1b152c] transition-all cursor-pointer shadow-2xs"
             title="Kelola Token 5 Platform (FB, IG, Threads, TikTok, YT) & Cloudflare R2"
           >
             <span>🌐</span>
@@ -200,10 +200,10 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onOpenApiKeyModal}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-[#f6faf4] border border-[#dce4db] text-xs font-semibold text-[#183127] transition-all cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white hover:bg-[#f4f1fa] border border-[#eae6f3] text-xs font-semibold text-[#1b152c] transition-all cursor-pointer shadow-2xs"
             title="Pengaturan Gemini API Key"
           >
-            <Key className="w-3.5 h-3.5 text-[#205c49]" />
+            <Key className="w-3.5 h-3.5 text-[#6c43e3]" />
             <span className="hidden sm:inline">API Key</span>
           </button>
         )}
@@ -212,9 +212,9 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="relative">
           <button
             onClick={() => setExportOpen(!exportOpen)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-[#f6faf4] border border-[#dce4db] text-xs font-semibold text-[#183127] transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white hover:bg-[#f4f1fa] border border-[#eae6f3] text-xs font-semibold text-[#1b152c] transition-all cursor-pointer"
           >
-            <Download className="w-3.5 h-3.5 text-[#52665b]" />
+            <Download className="w-3.5 h-3.5 text-[#736c87]" />
             <span className="hidden sm:inline">Ekspor</span>
           </button>
 
@@ -230,7 +230,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
                 <button
                   onClick={() => handleExport('pack-json')}
-                  className="w-full text-left px-3 py-2.5 hover:bg-emerald-50 flex items-center gap-2.5 text-[#183127] font-semibold cursor-pointer border-b border-[#edf1eb]"
+                  className="w-full text-left px-3 py-2.5 hover:bg-emerald-50 flex items-center gap-2.5 text-[#1b152c] font-semibold cursor-pointer border-b border-[#edf1eb]"
                 >
                   <span className="text-base">🚀</span>
                   <div>
@@ -238,7 +238,7 @@ export const Header: React.FC<HeaderProps> = ({
                       Paket Ruang Kalender
                       <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-100 text-emerald-800 font-bold uppercase tracking-wider">Baru</span>
                     </div>
-                    <div className="text-[10px] text-[#52665b] font-normal">Format .rkpack.json untuk App Kalender</div>
+                    <div className="text-[10px] text-[#736c87] font-normal">Format .rkpack.json untuk App Kalender</div>
                   </div>
                 </button>
 

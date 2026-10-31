@@ -79,10 +79,10 @@ export async function testGeminiApiKey(key: string): Promise<{ success: boolean;
   }
   for (const model of FALLBACK_MODELS) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key.trim()}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
       const res = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key.trim() },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: 'Balas dengan kata "READY".' }] }],
           generationConfig: { maxOutputTokens: 10 }
@@ -116,7 +116,7 @@ async function callDirectGeminiApi(
 
   for (const model of models) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
       const body: any = {
         contents: [{ role: 'user', parts: [{ text: promptText }] }]
       };
@@ -132,7 +132,7 @@ async function callDirectGeminiApi(
 
       const res = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
         body: JSON.stringify(body)
       });
 
@@ -488,24 +488,52 @@ export async function extractBrandBrainAi(rawText: string): Promise<{ brand: Par
   const clientKey = getGeminiApiKey();
   if (clientKey) {
     const system = `Anda adalah Chief Brand Strategist & Creative Director senior.
-Tugas Anda membaca deskripsi produk pengguna, lalu merumuskan BRAND BRAIN lengkap (name, category, product, brandPromise, audience, usp, tone, cta, color, positioning, audienceDNA, personalityVoice, contentDNA, brandMemory).`;
-    const schema = {
+Tugas Anda adalah membaca deskripsi produk, proposal, atau ide bisnis mentah pengguna, lalu merumuskan "BRAND BRAIN" yang 70-80% terisi secara otomatis, mendalam, dan siap menjadi otak seluruh konten pemasaran berbahasa Indonesia.
+
+Rumuskan komponen berikut:
+1. Identitas Dasar: name, category, product, brandPromise, usp, tone, cta, color (hex), instagramHandle.
+2. Positioning:
+   - weAre: identitas & format esensial brand
+   - forAudience: target spesifik
+   - whoNeed: masalah/kebutuhan utama yang dihadapi
+   - becauseWhy: alasan kuat harus percaya
+   - unlike: perbedaannya dengan alternatif/kompetitor
+   - statement: formula positioning 1 kalimat utuh
+3. Audience DNA:
+   - demographics: age, gender, location, occupation, lifestyle
+   - psychographics: painPoints (3-4 keresahan konkret), desires (3 impian), objections (keraguan sebelum membeli)
+   - contentBehavior: scrollStoppers (hook visual/teks penghenti scroll), commentTriggers (topik pemantik interaksi)
+4. Personality & Voice:
+   - humanPersona: personifikasi jika brand adalah seorang manusia (cth: "Teman pintar yang santai, bukan guru menggurui")
+   - voiceDo: 3-4 aturan gaya bahasa yang WAJIB dipakai
+   - voiceDont: 3-4 gaya bahasa yang HARAM dipakai
+   - signatureWords: 4-6 kata kunci khas brand
+   - forbiddenWords: 3-4 kata klise yang dilarang
+5. Content DNA & Funnel CTA:
+   - pillars: 4-5 pilar konten dengan estimasi persentase
+   - funnelCTA: formula CTA untuk awareness, consideration, dan conversion
+6. Brand Memory & Guardrails:
+   - alwaysSay: 2-3 hal yang selalu ditekankan
+   - neverSay: 2-3 hal yang tidak pernah dijanjikan
+   - claimsGuardrail: { allowed: [...], forbidden: [...] }
+7. analysisSummary: Ringkasan strategis 2 kalimat tentang positioning brand.`;
+
+    const prompt = `Analisis teks produk/bisnis berikut dan petakan ke BRAND BRAIN lengkap:\n"""\n${rawText.trim()}\n"""`;
+
+    const fullSchema: any = {
       type: "OBJECT",
       properties: {
-        name: { type: "STRING" },
-        category: { type: "STRING" },
-        industry: { type: "STRING" },
-        scale: { type: "STRING" },
-        scaleLabel: { type: "STRING" },
-        product: { type: "STRING" },
-        brandPromise: { type: "STRING" },
-        audience: { type: "STRING" },
-        usp: { type: "STRING" },
-        tone: { type: "STRING" },
-        cta: { type: "STRING" },
-        color: { type: "STRING" },
-        instagramHandle: { type: "STRING" },
-        analysisSummary: { type: "STRING" },
+        name: { type: "STRING", description: "Nama brand" },
+        category: { type: "STRING", description: "Kategori bisnis spesifik" },
+        product: { type: "STRING", description: "Produk atau layanan utama" },
+        brandPromise: { type: "STRING", description: "Janji utama brand kepada audiens" },
+        audience: { type: "STRING", description: "Ringkasan target audiens" },
+        usp: { type: "STRING", description: "Unique Selling Proposition" },
+        tone: { type: "STRING", description: "Tone of voice brand" },
+        cta: { type: "STRING", description: "Call to Action utama" },
+        color: { type: "STRING", description: "Hex color code utama, diawali #" },
+        instagramHandle: { type: "STRING", description: "Handle Instagram diawali @" },
+        analysisSummary: { type: "STRING", description: "Ringkasan positioning dan DNA brand" },
         positioning: {
           type: "OBJECT",
           properties: {
@@ -516,13 +544,207 @@ Tugas Anda membaca deskripsi produk pengguna, lalu merumuskan BRAND BRAIN lengka
             unlike: { type: "STRING" },
             statement: { type: "STRING" }
           }
+        },
+        audienceDNA: {
+          type: "OBJECT",
+          properties: {
+            primary: { type: "STRING" },
+            demographics: {
+              type: "OBJECT",
+              properties: {
+                age: { type: "STRING" },
+                gender: { type: "STRING" },
+                location: { type: "STRING" },
+                occupation: { type: "STRING" },
+                lifestyle: { type: "STRING" }
+              }
+            },
+            psychographics: {
+              type: "OBJECT",
+              properties: {
+                painPoints: { type: "ARRAY", items: { type: "STRING" } },
+                desires: { type: "ARRAY", items: { type: "STRING" } },
+                objections: { type: "ARRAY", items: { type: "STRING" } }
+              }
+            },
+            contentBehavior: {
+              type: "OBJECT",
+              properties: {
+                scrollStoppers: { type: "STRING" },
+                commentTriggers: { type: "STRING" }
+              }
+            }
+          }
+        },
+        personalityVoice: {
+          type: "OBJECT",
+          properties: {
+            humanPersona: { type: "STRING" },
+            voiceDo: { type: "ARRAY", items: { type: "STRING" } },
+            voiceDont: { type: "ARRAY", items: { type: "STRING" } },
+            signatureWords: { type: "ARRAY", items: { type: "STRING" } },
+            forbiddenWords: { type: "ARRAY", items: { type: "STRING" } }
+          }
+        },
+        competitorContext: {
+          type: "OBJECT",
+          properties: {
+            directCompetitors: { type: "ARRAY", items: { type: "STRING" } },
+            indirectCompetitors: { type: "ARRAY", items: { type: "STRING" } },
+            competitorWeakness: { type: "STRING" },
+            whatWeWillNeverDo: { type: "ARRAY", items: { type: "STRING" } }
+          }
+        },
+        offerConversionDNA: {
+          type: "OBJECT",
+          properties: {
+            mainOffer: { type: "STRING" },
+            entryOffer: { type: "STRING" },
+            priceRange: { type: "STRING" },
+            riskReversal: { type: "STRING" },
+            purchasePath: { type: "STRING" }
+          }
+        },
+        proofCredibility: {
+          type: "OBJECT",
+          properties: {
+            hardProofPoints: { type: "ARRAY", items: { type: "STRING" } },
+            caseTransformations: { type: "ARRAY", items: { type: "STRING" } },
+            customerVoiceRaw: { type: "ARRAY", items: { type: "STRING" } }
+          }
+        },
+        visualDNA: {
+          type: "OBJECT",
+          properties: {
+            photographyStyle: { type: "ARRAY", items: { type: "STRING" } },
+            visualDoNotUse: { type: "ARRAY", items: { type: "STRING" } }
+          }
+        },
+        contentDNA: {
+          type: "OBJECT",
+          properties: {
+            pillars: {
+              type: "ARRAY",
+              items: {
+                type: "OBJECT",
+                properties: {
+                  name: { type: "STRING" },
+                  percentage: { type: "NUMBER" },
+                  description: { type: "STRING" }
+                }
+              }
+            },
+            funnelCTA: {
+              type: "OBJECT",
+              properties: {
+                awareness: { type: "STRING" },
+                consideration: { type: "STRING" },
+                conversion: { type: "STRING" }
+              }
+            }
+          }
+        },
+        brandMemory: {
+          type: "OBJECT",
+          properties: {
+            alwaysSay: { type: "ARRAY", items: { type: "STRING" } },
+            neverSay: { type: "ARRAY", items: { type: "STRING" } },
+            claimsGuardrail: {
+              type: "OBJECT",
+              properties: {
+                allowed: { type: "ARRAY", items: { type: "STRING" } },
+                forbidden: { type: "ARRAY", items: { type: "STRING" } }
+              }
+            }
+          }
         }
       },
       required: ["name", "category", "product", "audience", "usp", "tone", "cta", "color", "analysisSummary"]
     };
-    const res = await callDirectGeminiApi(clientKey, activeModel, system, rawText, schema);
-    if (res) {
-      return { brand: res, analysisSummary: res.analysisSummary };
+
+    const groups = [
+      ["name", "category", "product", "brandPromise", "audience", "usp", "tone", "cta", "color", "instagramHandle", "analysisSummary", "positioning"],
+      ["competitorContext"],
+      ["audienceDNA"],
+      ["offerConversionDNA", "proofCredibility"],
+      ["personalityVoice", "visualDNA"],
+      ["contentDNA"],
+      ["brandMemory"]
+    ];
+    const groupLabels = ["Fondasi", "Kompetitor", "Audience DNA", "Penawaran", "Karakter & Gaya", "Content DNA", "Brand Memory"];
+    const out: any = {};
+    const miss: string[] = [];
+
+    for (let i = 0; i < groups.length; i++) {
+      const g = groups[i];
+      const sub: any = {
+        type: "OBJECT",
+        properties: {},
+        required: (fullSchema.required || []).filter((k: string) => g.includes(k))
+      };
+      g.forEach(k => {
+        sub.properties[k] = fullSchema.properties[k];
+      });
+      try {
+        const r = await callDirectGeminiApi(
+          clientKey,
+          activeModel,
+          system,
+          `${prompt}\n\nFOKUS PERMINTAAN INI: isi HANYA bagian berikut secara lengkap dan mendalam: ${g.join(", ")}. Bagian lain diproses terpisah, jangan diisi.`,
+          sub
+        );
+        Object.assign(out, r);
+      } catch (e: any) {
+        if (i === 0) throw e;
+        if (e && e.isLimit) {
+          for (let m = i; m < groups.length; m++) miss.push(groupLabels[m]);
+          break;
+        }
+        miss.push(groupLabels[i]);
+      }
+    }
+
+    if (miss.length && out.analysisSummary) {
+      out.analysisSummary += ` (Belum terisi karena limit: ${miss.join(", ")}. Klik Ekstrak lagi nanti.)`;
+    }
+
+    if (out.name) {
+      return {
+        brand: {
+          name: out.name || "Brand Baru",
+          category: out.category || "Bisnis & Produk",
+          product: out.product || "",
+          brandPromise: out.brandPromise || "",
+          audience: out.audience || "",
+          usp: out.usp || "",
+          tone: out.tone || "Hangat, bersahabat, penuh keaslian, dan edukatif",
+          cta: out.cta || "Hubungi kami sekarang",
+          color: out.color && out.color.startsWith("#") ? out.color : "#205c49",
+          instagramHandle: out.instagramHandle || (out.name ? `@${out.name.toLowerCase().replace(/[^a-z0-9]/g, "")}` : "@brandanda"),
+          positioning: out.positioning,
+          competitorContext: out.competitorContext,
+          offerConversionDNA: out.offerConversionDNA,
+          proofCredibility: out.proofCredibility,
+          audienceDNA: out.audienceDNA,
+          personalityVoice: out.personalityVoice,
+          visualDNA: out.visualDNA,
+          contentDNA: out.contentDNA,
+          brandMemory: out.brandMemory,
+          fieldStatus: {
+            foundation: out.brandPromise ? "ai_suggested" : "missing",
+            positioning: out.positioning?.statement ? "ai_suggested" : "missing",
+            competitorContext: out.competitorContext?.directCompetitors?.length ? "ai_suggested" : "missing",
+            audienceDNA: out.audienceDNA?.psychographics?.painPoints?.length ? "ai_suggested" : "missing",
+            offerConversionDNA: out.offerConversionDNA?.mainOffer ? "ai_suggested" : "missing",
+            proofCredibility: out.proofCredibility?.hardProofPoints?.length ? "ai_suggested" : "missing",
+            personalityVoice: out.personalityVoice?.humanPersona ? "ai_suggested" : "missing",
+            visualDNA: out.visualDNA?.photographyStyle?.length ? "ai_suggested" : "missing",
+            contentDNA: out.contentDNA?.pillars?.length ? "ai_suggested" : "missing",
+            brandMemory: out.brandMemory?.alwaysSay?.length ? "ai_suggested" : "missing"
+          }
+        },
+        analysisSummary: out.analysisSummary || "Brand Brain berhasil dianalisis dan dirumuskan dari deskripsi produk."
+      };
     }
   }
 
@@ -545,6 +767,34 @@ Tugas Anda membaca deskripsi produk pengguna, lalu merumuskan BRAND BRAIN lengka
     },
     analysisSummary: "Profil brand berhasil disaring dari deskripsi awal."
   };
+}
+
+export async function expandCustomBlockAi(title: string, category: string, currentContent: string, brand: BrandBrain): Promise<string> {
+  const clientKey = getGeminiApiKey();
+  if (!clientKey) {
+    throw new Error("Gemini API Key belum dimasukkan. Tambahkan API Key di menu Pengaturan.");
+  }
+  const brandPrompt = compileBrandBrainPrompt(brand);
+  const prompt = `Anda adalah Chief Brand Strategist & Creative Director senior.
+Bantu kembangkan dan sempurnakan blok acuan Brand Brain berikut untuk brand "${brand?.name || "Brand"}":
+
+Judul Blok: ${title}
+Kategori: ${category}
+Draf Konten Saat Ini:
+"""
+${currentContent || "(Belum ada konten, buatkan yang komprehensif dari awal)"}
+"""
+
+${brandPrompt}
+
+Instruksi:
+1. Buat acuan yang tajam, sangat praktis, aplikatif, dan langsung bisa dijadikan pedoman mutlak bagi tim kreatif / AI saat menulis konten.
+2. Gunakan format poin-poin rapi (bullet points atau nomor) berbahasa Indonesia.
+3. Hindari kalimat klise atau teori mengambang. Berikan instruksi konkret, contoh naskah, atau data terukur.
+4. Output HANYA berupa teks isi blok tersebut (tanpa salam pembuka/penutup).`;
+
+  const res = await callDirectGeminiApi(clientKey, activeModel, "Anda adalah Senior Brand Strategist & Content Architect.", prompt);
+  return typeof res === "string" ? res : JSON.stringify(res, null, 2);
 }
 
 export async function generateTrendBridgeAi(trendName: string, topic: string, brand: BrandBrain) {
